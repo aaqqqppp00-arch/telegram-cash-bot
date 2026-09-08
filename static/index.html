@@ -20,8 +20,8 @@
         
         <!-- الترويسة الرئيسية -->
         <header class="app-header">
-            <h1 class="main-title">💰 أرباح كاش</h1>
-            <p id="user-greeting" class="user-greeting">أهلاً بك</p>
+            <h1 class="main-title">أرباح كاش</h1>
+            <p id="user-greeting" class="user-greeting">أهلاً بيك</p>
         </header>
 
         <!-- رسالة التنبيهات العامة -->
@@ -32,43 +32,37 @@
             
             <!-- صندوق الرصيد -->
             <div class="card balance-card">
-                <span class="card-label">رصيدك الحالي المتاح للسحب</span>
+                <span class="card-label">رصيدك الحالي</span>
                 <div class="balance-amount"><span id="user-balance">0.00</span> <small>جنيه</small></div>
             </div>
 
             <!-- صندوق عدد الإعلانات -->
             <div class="card stat-card">
                 <div class="stat-item">
-                    <span class="stat-title">إعلانات شاهدتها اليوم:</span>
+                    <span class="stat-title">إعلانات شوفتها النهاردة:</span>
                     <span id="user-ads" class="stat-val">0</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-title">المكافأة لكل إعلان:</span>
+                    <span class="stat-title">مكافأة الإعلان:</span>
                     <span id="reward-rate" class="stat-val">0.05 جنيه</span>
                 </div>
             </div>
 
-            <!-- زر مشاهدة الإعلان الكبير -->
+            <!-- زر مشاهدة الإعلان -->
             <button id="btn-watch-ad" class="btn btn-watch">
-                <span class="btn-icon">▶️</span>
-                <span class="btn-text">شاهد إعلان الآن واكسب الفلوس</span>
+                <span class="btn-text">اتفرج على إعلان واكسب</span>
             </button>
-
-            <!-- نص إرشادي مبسط -->
-            <div class="help-box">
-                💡 <b>طريقة العمل:</b> اضغط على الزر الأخضر، وشاهد الإعلان كاملاً حتى يظهر زر الإغلاق (X). بمجرد إغلاقه ستضاف الفلوس لرصيدك فوراً.
-            </div>
 
             <hr class="divider">
 
             <!-- زر التوجه للسحب -->
             <button id="btn-go-withdraw" class="btn btn-withdraw-nav">
-                💸 اسحب فلوسك على محفظتك (كاش)
+                اسحب فلوسك كاش
             </button>
 
             <!-- زر سجل السحوبات -->
             <button id="btn-go-history" class="btn btn-secondary">
-                📋 سجل طلبات السحب السابقة
+                سجل طلبات السحب
             </button>
 
         </section>
@@ -77,16 +71,16 @@
         <!-- ================= الشاشة 2: سحب الفلوس ================= -->
         <section id="screen-withdraw" class="screen hidden">
             
-            <h2 class="section-title">💸 سحب أرباحك لمحفظتك</h2>
+            <h2 class="section-title">سحب الفلوس على محفظتك</h2>
             
             <div class="withdraw-rules">
-                ⚠️ الحد الأدنى للسحب هو: <b id="min-withdraw-text">20</b> جنيه مصري.
+                أقل مبلغ تقدر تسحبه هو: <b id="min-withdraw-text">20</b> جنيه.
             </div>
 
             <form id="withdraw-form">
                 
                 <!-- اختيار المحفظة -->
-                <label class="input-label">1. اختر شركة محفظتك:</label>
+                <label class="input-label">1. اختار شركتك:</label>
                 <div class="wallets-grid">
                     <label class="wallet-option">
                         <input type="radio" name="provider" value="vodafone_cash" checked>
@@ -102,7 +96,7 @@
                     </label>
                     <label class="wallet-option">
                         <input type="radio" name="provider" value="we_cash">
-                        <span class="wallet-box we">وي كاش (WE)</span>
+                        <span class="wallet-box we">وي كاش</span>
                     </label>
                 </div>
 
@@ -111,17 +105,17 @@
                 <input type="tel" id="withdraw-phone" class="text-input" placeholder="مثال: 01012345678" maxlength="11" required>
 
                 <!-- المبلغ المراد سحبه -->
-                <label for="withdraw-amount" class="input-label">3. اكتب المبلغ المراد سحبه (بالجنيه):</label>
+                <label for="withdraw-amount" class="input-label">3. اكتب المبلغ اللي عايز تسحبه:</label>
                 <input type="number" id="withdraw-amount" class="text-input" placeholder="مثال: 20" step="any" required>
 
                 <!-- زر الإرسال -->
                 <button type="submit" id="btn-submit-withdraw" class="btn btn-submit">
-                    ✅ إرسال طلب السحب الآن
+                    ابعت طلب السحب
                 </button>
             </form>
 
             <button id="btn-back-from-withdraw" class="btn btn-secondary">
-                ⬅️ رجوع للصفحة الرئيسية
+                رجوع للصفحة الرئيسية
             </button>
 
         </section>
@@ -130,14 +124,14 @@
         <!-- ================= الشاشة 3: سجل السحوبات ================= -->
         <section id="screen-history" class="screen hidden">
             
-            <h2 class="section-title">📋 سجل عمليات السحب</h2>
+            <h2 class="section-title">سجل السحوبات</h2>
             
             <div id="history-list" class="history-list">
-                <p class="empty-msg">جاري تحميل السجل...</p>
+                <p class="empty-msg">بيحمل السجل...</p>
             </div>
 
             <button id="btn-back-from-history" class="btn btn-secondary">
-                ⬅️ رجوع للصفحة الرئيسية
+                رجوع للصفحة الرئيسية
             </button>
 
         </section>

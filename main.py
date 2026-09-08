@@ -39,7 +39,7 @@ if config.BOT_TOKEN and config.BOT_TOKEN != "YOUR_BOT_TOKEN_HERE":
 # --- أوامر البوت ---
 
 async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """الرد على أمر /start بفتح الميني آب وتوجيه المستخدم"""
+    """الرد على أمر /start بالعامية المصرية وبدون أي إيموجي"""
     user = update.effective_user
     database.get_or_create_user(user.id, user.first_name, user.username)
 
@@ -50,7 +50,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [
             InlineKeyboardButton(
-                "🚀 اضغط هنا لفتح محفظة الأرباح",
+                "افتح محفظة الأرباح",
                 web_app=WebAppInfo(url=web_url)
             )
         ]
@@ -58,13 +58,13 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     welcome_text = (
-        f"أهلاً بك يا <b>{user.first_name}</b> في بوت <b>أرباح كاش</b> 💰\n\n"
-        "📱 <b>كيف تربح من البوت؟</b>\n"
-        "1. افتح التطبيق بالضغط على الزر بالأسفل.\n"
-        "2. شاهد الإعلانات واجمع الأرباح فوراً.\n"
-        "3. اسحب أرباحك على محفظتك (فودافون كاش، أورنج كاش، اتصالات كاش، وي كاش).\n\n"
-        f"💵 <b>المكافأة:</b> {config.REWARD_PER_AD} ج لكل إعلان.\n"
-        f"💳 <b>الحد الأدنى للسحب:</b> {config.MIN_WITHDRAWAL} ج فقط!"
+        f"أهلاً بيك يا <b>{user.first_name}</b> في بوت <b>أرباح كاش</b>\n\n"
+        "ازاي تكسب من البوت؟\n"
+        "1. دوس على الزرار اللي تحت وافتح التطبيق.\n"
+        "2. اتفرج على الإعلانات وجمع فلوس في رصيدك.\n"
+        "3. اسحب فلوسك على محفظتك (فودافون كاش، أورنج كاش، اتصالات كاش، وي كاش).\n\n"
+        f"المكافأة: {config.REWARD_PER_AD} جنيه على كل إعلان.\n"
+        f"أقل مبلغ للسحب: {config.MIN_WITHDRAWAL} جنيه بس!"
     )
 
     await update.message.reply_html(welcome_text, reply_markup=reply_markup)
@@ -74,25 +74,25 @@ async def cmd_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """لوحة تحكم المسؤول لعرض الإحصائيات وطلبات السحب المعلقة"""
     user_id = update.effective_user.id
     if user_id != config.ADMIN_ID and config.ADMIN_ID != 0:
-        await update.message.reply_text("عذراً، هذا الأمر مخصص للمسؤول فقط.")
+        await update.message.reply_text("الأمر ده مخصص للمسؤول بس.")
         return
 
     stats = database.get_system_stats()
     pending = database.get_pending_withdrawals()
 
     text = (
-        "📊 <b>لوحة تحكم المسؤول (أرباح كاش):</b>\n\n"
-        f"👥 إجمالي المستخدمين: <b>{stats['total_users']}</b>\n"
-        f"📺 إجمالي الإعلانات المشاهدة: <b>{stats['total_ads'] or 0}</b>\n"
-        f"💰 إجمالي الأرباح المكتسبة: <b>{(stats['total_paid_out'] or 0):.2f} ج</b>\n"
-        f"⏳ طلبات السحب المعلقة: <b>{stats['pending_withdrawals']}</b>\n"
+        "لوحة تحكم المسؤول (أرباح كاش):\n\n"
+        f"عدد المستخدمين: <b>{stats['total_users']}</b>\n"
+        f"إجمالي الإعلانات اللي اتسجلت: <b>{stats['total_ads'] or 0}</b>\n"
+        f"إجمالي الفلوس اللي اتجمعت: <b>{(stats['total_paid_out'] or 0):.2f} جنيه</b>\n"
+        f"طلبات السحب اللي مستنية موافقة: <b>{stats['pending_withdrawals']}</b>\n"
     )
 
     await update.message.reply_html(text)
 
     # عرض الطلبات المعلقة إن وجدت
     if pending:
-        for req in pending[:5]: # عرض أول 5 طلبات
+        for req in pending[:5]:
             p_name = {
                 "vodafone_cash": "فودافون كاش",
                 "orange_cash": "أورنج كاش",
@@ -101,30 +101,30 @@ async def cmd_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
             }.get(req["provider"], req["provider"])
 
             req_text = (
-                f"🚨 <b>طلب سحب رقم #{req['id']}</b>\n"
-                f"المستخدم: @{req.get('username') or 'بدون'} (ID: <code>{req['telegram_id']}</code>)\n"
+                f"طلب سحب رقم #{req['id']}\n"
+                f"المستخدم: @{req.get('username') or 'من غير يوزر'} (الآيدي: <code>{req['telegram_id']}</code>)\n"
                 f"المحفظة: <b>{p_name}</b>\n"
                 f"الرقم: <code>{req['phone_number']}</code>\n"
-                f"المبلغ: <b>{req['amount']:.2f} ج</b>"
+                f"المبلغ: <b>{req['amount']:.2f} جنيه</b>"
             )
             buttons = [
                 [
-                    InlineKeyboardButton("✅ تم التحويل (تأكيد)", callback_data=f"appr_{req['id']}"),
-                    InlineKeyboardButton("❌ رفض وإرجاع الرصيد", callback_data=f"rejc_{req['id']}")
+                    InlineKeyboardButton("تم التحويل (تأكيد)", callback_data=f"appr_{req['id']}"),
+                    InlineKeyboardButton("رفض وإرجاع الفلوس", callback_data=f"rejc_{req['id']}")
                 ]
             ]
             await update.message.reply_html(req_text, reply_markup=InlineKeyboardMarkup(buttons))
 
 
 async def handle_admin_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """التعامل مع ضغطات أزرار الموافقة والرفض من المسؤول"""
+    """التعامل مع ضغطات أزرار الموافقة والرفض من المسؤول بدون إيموجي"""
     query = update.callback_query
     await query.answer()
 
     data = query.data
     user_id = update.effective_user.id
     if user_id != config.ADMIN_ID and config.ADMIN_ID != 0:
-        await query.edit_message_text("غير مسموح لك بتنفيذ هذا الإجراء.")
+        await query.edit_message_text("مش مسموحلك تنفذ الخطوة دي.")
         return
 
     action, req_id_str = data.split("_")
@@ -134,7 +134,7 @@ async def handle_admin_callback(update: Update, context: ContextTypes.DEFAULT_TY
     success, withdrawal = database.update_withdrawal_status(req_id, new_status)
 
     if not success:
-        await query.edit_message_text("⚠️ هذا الطلب تم اتخاذ إجراء عليه مسبقاً أو غير موجود.")
+        await query.edit_message_text("الطلب ده اتنفذ قبل كده أو مش موجود.")
         return
 
     p_name = {
@@ -146,8 +146,8 @@ async def handle_admin_callback(update: Update, context: ContextTypes.DEFAULT_TY
 
     if new_status == "approved":
         await query.edit_message_text(
-            f"✅ <b>تم تأكيد تحويل الطلب #{req_id} بنجاح!</b>\n"
-            f"المبلغ: {withdrawal['amount']:.2f} ج على رقم {withdrawal['phone_number']} ({p_name})",
+            f"تم تأكيد تحويل الطلب #{req_id} بنجاح.\n"
+            f"المبلغ: {withdrawal['amount']:.2f} جنيه على رقم {withdrawal['phone_number']} ({p_name})",
             parse_mode="HTML"
         )
         # إشعار المستخدم بنجاح التحويل
@@ -155,11 +155,11 @@ async def handle_admin_callback(update: Update, context: ContextTypes.DEFAULT_TY
             await context.bot.send_message(
                 chat_id=withdrawal["telegram_id"],
                 text=(
-                    "🎉 <b>مبروك! تم تحويل أرباحك بنجاح!</b>\n\n"
-                    f"💵 المبلغ: <b>{withdrawal['amount']:.2f} ج</b>\n"
-                    f"📱 المحفظة: <b>{p_name}</b>\n"
-                    f"📞 الرقم: <b>{withdrawal['phone_number']}</b>\n\n"
-                    "شكراً لعملك معنا! يمكنك الاستمرار بمشاهدة المزيد من الإعلانات لسحب مبالغ جديدة 🚀"
+                    "ألف مبروك! تم تحويل فلوسك بنجاح.\n\n"
+                    f"المبلغ: <b>{withdrawal['amount']:.2f} جنيه</b>\n"
+                    f"المحفظة: <b>{p_name}</b>\n"
+                    f"الرقم: <b>{withdrawal['phone_number']}</b>\n\n"
+                    "شكراً لوجودك معانا، تقدر تكمل فرجة على إعلانات وتسحب تاني في أي وقت."
                 ),
                 parse_mode="HTML"
             )
@@ -168,7 +168,7 @@ async def handle_admin_callback(update: Update, context: ContextTypes.DEFAULT_TY
 
     else:
         await query.edit_message_text(
-            f"❌ <b>تم رفض الطلب #{req_id} وإرجاع المبلغ ({withdrawal['amount']:.2f} ج) لرصيد المستخدم.</b>",
+            f"تم رفض الطلب #{req_id} والفلوس رجعت ({withdrawal['amount']:.2f} جنيه) لرصيد المستخدم.",
             parse_mode="HTML"
         )
         # إشعار المستخدم بالرفض
@@ -176,9 +176,9 @@ async def handle_admin_callback(update: Update, context: ContextTypes.DEFAULT_TY
             await context.bot.send_message(
                 chat_id=withdrawal["telegram_id"],
                 text=(
-                    "⚠️ <b>تنبيه بخصوص طلب السحب:</b>\n\n"
-                    f"تم رفض طلب السحب بمبلغ <b>{withdrawal['amount']:.2f} ج</b> وتمت إعادة المبلغ بالكامل إلى رصيدك.\n"
-                    "يرجى التأكد من كتابة رقم محفظة صحيح ومفعل وحاول مجدداً."
+                    "تنبيه بخصوص طلب السحب:\n\n"
+                    f"طلب السحب بتاعك بمبلغ <b>{withdrawal['amount']:.2f} جنيه</b> اترفض والفلوس رجعت بالكامل لرصيدك في التطبيق.\n"
+                    "أتأكد إن رقم المحفظة شغال ومظبوط وجرب تسحب تاني."
                 ),
                 parse_mode="HTML"
             )
@@ -321,16 +321,16 @@ async def api_withdraw(body: WithdrawRequest, x_telegram_init_data: Optional[str
         }.get(body.provider, body.provider)
 
         notify_text = (
-            f"🚨 <b>طلب سحب جديد #{withdrawal_id}!</b>\n\n"
-            f"👤 المستخدم: @{username} (ID: <code>{telegram_id}</code>)\n"
-            f"💳 المحفظة: <b>{p_name}</b>\n"
-            f"📞 رقم الكاش: <code>{body.phone_number}</code>\n"
-            f"💵 المبلغ: <b>{body.amount:.2f} جنيه</b>"
+            f"طلب سحب جديد #{withdrawal_id}!\n\n"
+            f"المستخدم: @{username} (الآيدي: <code>{telegram_id}</code>)\n"
+            f"المحفظة: <b>{p_name}</b>\n"
+            f"رقم الكاش: <code>{body.phone_number}</code>\n"
+            f"المبلغ: <b>{body.amount:.2f} جنيه</b>"
         )
         buttons = [
             [
-                InlineKeyboardButton("✅ تم التحويل (تأكيد)", callback_data=f"appr_{withdrawal_id}"),
-                InlineKeyboardButton("❌ رفض وإرجاع الرصيد", callback_data=f"rejc_{withdrawal_id}")
+                InlineKeyboardButton("تم التحويل (تأكيد)", callback_data=f"appr_{withdrawal_id}"),
+                InlineKeyboardButton("رفض وإرجاع الفلوس", callback_data=f"rejc_{withdrawal_id}")
             ]
         ]
         try:

@@ -51,7 +51,6 @@ function showAlert(message, type = "info") {
     alertBox.innerText = message;
     alertBox.scrollIntoView({ behavior: "smooth" });
     
-    // إخفاء التنبيه بعد 5 ثوانٍ
     setTimeout(() => {
         alertBox.className = "alert-box hidden";
     }, 5000);
@@ -89,7 +88,7 @@ async function loadUserData() {
             rewardAmount = data.config.reward_per_ad;
             adsgramBlockId = data.config.adsgram_block_id;
 
-            userGreeting.innerText = `أهلاً بك يا ${data.user.first_name || "صديقنا"}`;
+            userGreeting.innerText = `أهلاً بيك يا ${data.user.first_name || "صديقنا"}`;
             userBalance.innerText = currentBalance.toFixed(2);
             userAds.innerText = data.user.total_ads_watched;
             rewardRate.innerText = `${rewardAmount.toFixed(2)} جنيه`;
@@ -98,11 +97,11 @@ async function loadUserData() {
             // تجهيز متحكم Adsgram
             initAdsgram();
         } else {
-            showAlert("حدث خطأ في تحميل بياناتك: " + (data.error || ""), "error");
+            showAlert("حصلت مشكلة في تحميل بياناتك: " + (data.error || ""), "error");
         }
     } catch (err) {
         console.error("Error fetching user data:", err);
-        showAlert("تعذر الاتصال بالسيرفر. تأكد من اتصال الإنترنت.", "error");
+        showAlert("مش عارفين نوصل للسيرفر، اتأكد من النت عندك.", "error");
     }
 }
 
@@ -120,36 +119,34 @@ function initAdsgram() {
 // تشغيل إعلان Adsgram
 btnWatchAd.addEventListener("click", async () => {
     btnWatchAd.disabled = true;
-    btnWatchAd.querySelector(".btn-text").innerText = "جاري تجهيز الإعلان...";
+    btnWatchAd.querySelector(".btn-text").innerText = "بيجهز الإعلان...";
 
-    // إذا لم يضبط المشرف معرّف الإعلانات الحقيقي بعد (وضع تجريبي للتأكد من عمل البوت)
+    // إذا لم يضبط المشرف معرّف الإعلانات الحقيقي بعد
     if (!adController || adsgramBlockId === "YOUR_ADSGRAM_BLOCK_ID") {
-        const simulate = confirm("تنبيه المشرف: لم يتم وضع كود Adsgram Block ID الحقيقي بعد في الإعدادات.\n\nهل تود محاكاة مشاهدة إعلان تجريبياً لإضافة الرصيد؟");
+        const simulate = confirm("تنبيه المشرف: كود الإعلانات مش مظبوط في الإعدادات.\n\nعايز تجرب تضيف رصيد تجريبي؟");
         if (simulate) {
             await creditReward();
         } else {
             btnWatchAd.disabled = false;
-            btnWatchAd.querySelector(".btn-text").innerText = "شاهد إعلان الآن واكسب الفلوس";
+            btnWatchAd.querySelector(".btn-text").innerText = "اتفرج على إعلان واكسب";
         }
         return;
     }
 
     // تشغيل الإعلان الحقيقي عبر Adsgram
     adController.show().then(async (result) => {
-        // المستخدم أنهى الإعلان كاملاً!
-        showAlert("أحسنت! لقد شاهدت الإعلان كاملاً، جاري إضافة المكافأة...", "info");
+        showAlert("عاش! شوفت الإعلان كامل، بنضيفلك الفلوس حالاً...", "info");
         await creditReward();
     }).catch((result) => {
-        // المستخدم أغلق الإعلان أو حدث خطأ في الشبكة
-        let msg = "لم تكمل مشاهدة الإعلان حتى نهايته، لم تتم إضافة المكافأة.";
+        let msg = "مشوفتش الإعلان للآخر، فالفلوس منزلتش.";
         if (result && result.description) {
             if (result.description.includes("no ads") || result.description.includes("empty")) {
-                msg = "لا تتوفر إعلانات جديدة حالياً في منطقتك، جرب مجدداً بعد دقيقة.";
+                msg = "مفيش إعلانات متاحة حالياً، جرب تاني بعد دقيقة.";
             }
         }
         showAlert(msg, "error");
         btnWatchAd.disabled = false;
-        btnWatchAd.querySelector(".btn-text").innerText = "شاهد إعلان الآن واكسب الفلوس";
+        btnWatchAd.querySelector(".btn-text").innerText = "اتفرج على إعلان واكسب";
     });
 });
 
@@ -169,21 +166,20 @@ async function creditReward() {
             currentBalance = data.new_balance;
             userBalance.innerText = currentBalance.toFixed(2);
             userAds.innerText = parseInt(userAds.innerText) + 1;
-            showAlert(`مبروك! تمت إضافة +${rewardAmount.toFixed(2)} جنيه إلى رصيدك.`, "success");
+            showAlert(`مبروك! نزل في رصيدك +${rewardAmount.toFixed(2)} جنيه.`, "success");
             
-            // اهتزاز خفيف للموبايل إن وجد
             if (tg?.HapticFeedback) {
                 tg.HapticFeedback.notificationOccurred("success");
             }
         } else {
-            showAlert(data.message || "حدث خطأ أثناء إضافة الرصيد", "error");
+            showAlert(data.message || "حصلت مشكلة وإحنا بنضيف الرصيد", "error");
         }
     } catch (err) {
         console.error("Reward error:", err);
-        showAlert("فشل إرسال المكافأة، تأكد من الاتصال بالإنترنت.", "error");
+        showAlert("فشل إرسال المكافأة، اتأكد من النت عندك.", "error");
     } finally {
         btnWatchAd.disabled = false;
-        btnWatchAd.querySelector(".btn-text").innerText = "شاهد إعلان الآن واكسب الفلوس";
+        btnWatchAd.querySelector(".btn-text").innerText = "اتفرج على إعلان واكسب";
     }
 }
 
@@ -197,26 +193,26 @@ withdrawForm.addEventListener("submit", async (e) => {
 
     // التحقق المبدئي
     if (!phone || phone.length !== 11) {
-        showAlert("يجب إدخال رقم هاتف صحيح مكون من 11 رقماً", "error");
+        showAlert("لازم تكتب رقم موبايل صح مكون من 11 رقم", "error");
         return;
     }
 
     if (isNaN(amount) || amount < minWithdrawal) {
-        showAlert(`الحد الأدنى للسحب هو ${minWithdrawal} جنيه`, "error");
+        showAlert(`أقل مبلغ تقدر تسحبه هو ${minWithdrawal} جنيه`, "error");
         return;
     }
 
     if (amount > currentBalance) {
-        showAlert(`رصيدك الحالي (${currentBalance.toFixed(2)} ج) غير كافٍ لسحب هذا المبلغ!`, "error");
+        showAlert(`رصيدك الحالي (${currentBalance.toFixed(2)} ج) ميكفيش تسحب المبلغ ده!`, "error");
         return;
     }
 
-    const confirmWithdraw = confirm(`تأكيد السحب:\n\nالمحفظة: ${selectedProvider}\nالرقم: ${phone}\nالمبلغ: ${amount} جنيه\n\nهل البيانات صحيحة؟`);
+    const confirmWithdraw = confirm(`تأكيد السحب:\n\nالمحفظة: ${selectedProvider}\nالرقم: ${phone}\nالمبلغ: ${amount} جنيه\n\nالبيانات كده صح؟`);
     if (!confirmWithdraw) return;
 
     const btnSubmit = document.getElementById("btn-submit-withdraw");
     btnSubmit.disabled = true;
-    btnSubmit.innerText = "جاري إرسال الطلب...";
+    btnSubmit.innerText = "بيبعت الطلب...";
 
     try {
         const res = await fetch("/api/withdraw", {
@@ -247,16 +243,16 @@ withdrawForm.addEventListener("submit", async (e) => {
         }
     } catch (err) {
         console.error("Withdraw error:", err);
-        showAlert("حدث خطأ أثناء التواصل مع السيرفر.", "error");
+        showAlert("حصلت مشكلة في الاتصال بالسيرفر.", "error");
     } finally {
         btnSubmit.disabled = false;
-        btnSubmit.innerText = "✅ إرسال طلب السحب الآن";
+        btnSubmit.innerText = "ابعت طلب السحب";
     }
 });
 
 // تحميل سجل السحوبات
 async function loadWithdrawalHistory() {
-    historyList.innerHTML = '<p class="empty-msg">جاري تحميل السجل...</p>';
+    historyList.innerHTML = '<p class="empty-msg">بيحمل السجل...</p>';
     try {
         const res = await fetch("/api/withdrawals", {
             headers: {
@@ -268,13 +264,13 @@ async function loadWithdrawalHistory() {
         if (data.success && data.withdrawals && data.withdrawals.length > 0) {
             historyList.innerHTML = data.withdrawals.map(w => {
                 let badgeClass = "badge-pending";
-                let statusText = "قيد المراجعة ⏳";
+                let statusText = "قيد المراجعة";
                 if (w.status === "approved") {
                     badgeClass = "badge-approved";
-                    statusText = "تم التحويل بنجاح ✅";
+                    statusText = "تم التحويل بنجاح";
                 } else if (w.status === "rejected") {
                     badgeClass = "badge-rejected";
-                    statusText = "مرفوض وتم إرجاع الرصيد ❌";
+                    statusText = "مرفوض والفلوس رجعت لرصيدك";
                 }
 
                 let provName = "فودافون كاش";
@@ -298,7 +294,7 @@ async function loadWithdrawalHistory() {
                 `;
             }).join("");
         } else {
-            historyList.innerHTML = '<p class="empty-msg">لا توجد لديك عمليات سحب سابقة حتى الآن.</p>';
+            historyList.innerHTML = '<p class="empty-msg">مفيش أي سحوبات سابقة لحد دلوقتي.</p>';
         }
     } catch (err) {
         historyList.innerHTML = '<p class="empty-msg">فشل تحميل السجل.</p>';
