@@ -1,0 +1,376 @@
+/* تصميم مسطح، كلاسيكي، عالي التباين، بدون انحناءات زوايا (Zero Border Radius) */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Cairo", "Tahoma", sans-serif;
+    border-radius: 0px !important; /* ممنوع الزوايا المنحنية تماماً بناءً على رغبة المستخدم */
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: #f7f7f7;
+    color: #111111;
+    font-size: 16px;
+    line-height: 1.5;
+    padding: 12px;
+    direction: rtl;
+}
+
+.container {
+    max-width: 480px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border: 3px solid #111111;
+    padding: 16px;
+    box-shadow: 4px 4px 0px #111111;
+}
+
+/* ترويسة الصفحة */
+.app-header {
+    text-align: center;
+    border-bottom: 2px solid #111111;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+.main-title {
+    font-size: 26px;
+    font-weight: 900;
+    color: #000000;
+}
+
+.user-greeting {
+    font-size: 16px;
+    font-weight: bold;
+    color: #444444;
+    margin-top: 4px;
+}
+
+/* التنبيهات */
+.alert-box {
+    padding: 12px;
+    margin-bottom: 14px;
+    font-size: 15px;
+    font-weight: bold;
+    border: 2px solid #000;
+    text-align: center;
+}
+
+.alert-box.success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #28a745;
+}
+
+.alert-box.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #dc3545;
+}
+
+.alert-box.info {
+    background-color: #fff3cd;
+    color: #856404;
+    border-color: #ffeeba;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* الصناديق والبطاقات */
+.card {
+    border: 2px solid #111111;
+    padding: 14px;
+    margin-bottom: 14px;
+    background-color: #fafafa;
+}
+
+.balance-card {
+    background-color: #e8f5e9;
+    border: 3px solid #2e7d32;
+    text-align: center;
+}
+
+.card-label {
+    display: block;
+    font-size: 15px;
+    font-weight: bold;
+    color: #2e7d32;
+    margin-bottom: 6px;
+}
+
+.balance-amount {
+    font-size: 38px;
+    font-weight: 900;
+    color: #1b5e20;
+}
+
+.balance-amount small {
+    font-size: 18px;
+    font-weight: normal;
+}
+
+.stat-card {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f0f0f0;
+}
+
+.stat-item {
+    font-size: 14px;
+}
+
+.stat-title {
+    display: block;
+    color: #555;
+}
+
+.stat-val {
+    font-size: 18px;
+    font-weight: 900;
+    color: #000;
+}
+
+/* الأزرار العريضة والواضحة */
+.btn {
+    display: block;
+    width: 100%;
+    padding: 16px 10px;
+    font-size: 18px;
+    font-weight: 900;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid #111111;
+    margin-bottom: 12px;
+    text-decoration: none;
+    transition: transform 0.05s ease, background-color 0.1s ease;
+}
+
+.btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: none;
+}
+
+/* زر مشاهدة الإعلان الرئيسي */
+.btn-watch {
+    background-color: #28a745;
+    color: #ffffff;
+    font-size: 20px;
+    box-shadow: 4px 4px 0px #000000;
+    border: 3px solid #000000;
+}
+
+.btn-watch:hover {
+    background-color: #218838;
+}
+
+.btn-watch:disabled {
+    background-color: #888888;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.btn-icon {
+    margin-left: 6px;
+}
+
+/* صندوق الإرشاد */
+.help-box {
+    background-color: #fffde7;
+    border: 2px dashed #fbc02d;
+    padding: 10px;
+    font-size: 14px;
+    color: #333333;
+    line-height: 1.4;
+    margin-bottom: 14px;
+}
+
+.divider {
+    border: 0;
+    border-top: 2px solid #cccccc;
+    margin: 16px 0;
+}
+
+/* زر السحب */
+.btn-withdraw-nav {
+    background-color: #007bff;
+    color: #ffffff;
+    box-shadow: 3px 3px 0px #000000;
+}
+
+.btn-withdraw-nav:hover {
+    background-color: #0056b3;
+}
+
+/* زر ثانوي / رجوع */
+.btn-secondary {
+    background-color: #e9ecef;
+    color: #212529;
+}
+
+.btn-secondary:hover {
+    background-color: #dde2e6;
+}
+
+/* زر تأكيد السحب */
+.btn-submit {
+    background-color: #28a745;
+    color: #ffffff;
+    box-shadow: 3px 3px 0px #000000;
+    margin-top: 14px;
+}
+
+/* شاشة السحب والمدخلات */
+.section-title {
+    font-size: 20px;
+    font-weight: 900;
+    margin-bottom: 10px;
+    text-align: center;
+    border-bottom: 2px solid #111;
+    padding-bottom: 6px;
+}
+
+.withdraw-rules {
+    background-color: #ffebee;
+    border: 2px solid #e53935;
+    color: #b71c1c;
+    padding: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 14px;
+}
+
+.input-label {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 12px;
+    margin-bottom: 6px;
+    color: #111111;
+}
+
+.text-input {
+    width: 100%;
+    padding: 14px;
+    font-size: 18px;
+    font-weight: bold;
+    border: 2px solid #222222;
+    background-color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.text-input:focus {
+    outline: none;
+    border: 3px solid #0056b3;
+    background-color: #fdfdfd;
+}
+
+/* شبكة اختيار المحفظة */
+.wallets-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.wallet-option {
+    cursor: pointer;
+    display: block;
+}
+
+.wallet-option input[type="radio"] {
+    display: none;
+}
+
+.wallet-box {
+    display: block;
+    padding: 12px 6px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 15px;
+    border: 2px solid #555555;
+    background-color: #eeeeee;
+    color: #111111;
+}
+
+/* تأثير التحديد للشبكة */
+.wallet-option input[type="radio"]:checked + .wallet-box {
+    border: 3px solid #000000;
+    color: #ffffff;
+    box-shadow: 2px 2px 0px #000000;
+}
+
+.wallet-option input[type="radio"]:checked + .wallet-box.vf {
+    background-color: #e60000; /* أحمر فودافون */
+}
+
+.wallet-option input[type="radio"]:checked + .wallet-box.og {
+    background-color: #ff7900; /* برتقالي أورنج */
+}
+
+.wallet-option input[type="radio"]:checked + .wallet-box.et {
+    background-color: #008751; /* أخضر اتصالات */
+}
+
+.wallet-option input[type="radio"]:checked + .wallet-box.we {
+    background-color: #5c1677; /* بنفسجي وي */
+}
+
+/* سجل السحوبات */
+.history-list {
+    margin-bottom: 16px;
+}
+
+.history-item {
+    border: 2px solid #111;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #fafafa;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 900;
+    font-size: 16px;
+    border-bottom: 1px dashed #ccc;
+    padding-bottom: 6px;
+    margin-bottom: 6px;
+}
+
+.history-details {
+    font-size: 14px;
+    color: #444;
+}
+
+.badge {
+    padding: 2px 6px;
+    font-size: 13px;
+    font-weight: bold;
+    border: 1px solid #000;
+}
+
+.badge-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.badge-approved {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.badge-rejected {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.empty-msg {
+    text-align: center;
+    color: #777;
+    padding: 20px 0;
+    font-size: 15px;
+}

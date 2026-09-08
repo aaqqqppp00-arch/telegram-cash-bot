@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>أرباح كاش</title>
+    <!-- سكربت تليجرام الرسمي -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- مكتبة إعلانات Adsgram -->
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- الترويسة الرئيسية -->
+        <header class="app-header">
+            <h1 class="main-title">💰 أرباح كاش</h1>
+            <p id="user-greeting" class="user-greeting">أهلاً بك</p>
+        </header>
+
+        <!-- رسالة التنبيهات العامة -->
+        <div id="alert-box" class="alert-box hidden"></div>
+
+        <!-- ================= الشاشة 1: الرئيسية والربح ================= -->
+        <section id="screen-home" class="screen active">
+            
+            <!-- صندوق الرصيد -->
+            <div class="card balance-card">
+                <span class="card-label">رصيدك الحالي المتاح للسحب</span>
+                <div class="balance-amount"><span id="user-balance">0.00</span> <small>جنيه</small></div>
+            </div>
+
+            <!-- صندوق عدد الإعلانات -->
+            <div class="card stat-card">
+                <div class="stat-item">
+                    <span class="stat-title">إعلانات شاهدتها اليوم:</span>
+                    <span id="user-ads" class="stat-val">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-title">المكافأة لكل إعلان:</span>
+                    <span id="reward-rate" class="stat-val">0.05 جنيه</span>
+                </div>
+            </div>
+
+            <!-- زر مشاهدة الإعلان الكبير -->
+            <button id="btn-watch-ad" class="btn btn-watch">
+                <span class="btn-icon">▶️</span>
+                <span class="btn-text">شاهد إعلان الآن واكسب الفلوس</span>
+            </button>
+
+            <!-- نص إرشادي مبسط -->
+            <div class="help-box">
+                💡 <b>طريقة العمل:</b> اضغط على الزر الأخضر، وشاهد الإعلان كاملاً حتى يظهر زر الإغلاق (X). بمجرد إغلاقه ستضاف الفلوس لرصيدك فوراً.
+            </div>
+
+            <hr class="divider">
+
+            <!-- زر التوجه للسحب -->
+            <button id="btn-go-withdraw" class="btn btn-withdraw-nav">
+                💸 اسحب فلوسك على محفظتك (كاش)
+            </button>
+
+            <!-- زر سجل السحوبات -->
+            <button id="btn-go-history" class="btn btn-secondary">
+                📋 سجل طلبات السحب السابقة
+            </button>
+
+        </section>
+
+
+        <!-- ================= الشاشة 2: سحب الفلوس ================= -->
+        <section id="screen-withdraw" class="screen hidden">
+            
+            <h2 class="section-title">💸 سحب أرباحك لمحفظتك</h2>
+            
+            <div class="withdraw-rules">
+                ⚠️ الحد الأدنى للسحب هو: <b id="min-withdraw-text">20</b> جنيه مصري.
+            </div>
+
+            <form id="withdraw-form">
+                
+                <!-- اختيار المحفظة -->
+                <label class="input-label">1. اختر شركة محفظتك:</label>
+                <div class="wallets-grid">
+                    <label class="wallet-option">
+                        <input type="radio" name="provider" value="vodafone_cash" checked>
+                        <span class="wallet-box vf">فودافون كاش</span>
+                    </label>
+                    <label class="wallet-option">
+                        <input type="radio" name="provider" value="orange_cash">
+                        <span class="wallet-box og">أورنج كاش</span>
+                    </label>
+                    <label class="wallet-option">
+                        <input type="radio" name="provider" value="etisalat_cash">
+                        <span class="wallet-box et">اتصالات كاش</span>
+                    </label>
+                    <label class="wallet-option">
+                        <input type="radio" name="provider" value="we_cash">
+                        <span class="wallet-box we">وي كاش (WE)</span>
+                    </label>
+                </div>
+
+                <!-- رقم الموبايل -->
+                <label for="withdraw-phone" class="input-label">2. اكتب رقم الموبايل (11 رقم):</label>
+                <input type="tel" id="withdraw-phone" class="text-input" placeholder="مثال: 01012345678" maxlength="11" required>
+
+                <!-- المبلغ المراد سحبه -->
+                <label for="withdraw-amount" class="input-label">3. اكتب المبلغ المراد سحبه (بالجنيه):</label>
+                <input type="number" id="withdraw-amount" class="text-input" placeholder="مثال: 20" step="any" required>
+
+                <!-- زر الإرسال -->
+                <button type="submit" id="btn-submit-withdraw" class="btn btn-submit">
+                    ✅ إرسال طلب السحب الآن
+                </button>
+            </form>
+
+            <button id="btn-back-from-withdraw" class="btn btn-secondary">
+                ⬅️ رجوع للصفحة الرئيسية
+            </button>
+
+        </section>
+
+
+        <!-- ================= الشاشة 3: سجل السحوبات ================= -->
+        <section id="screen-history" class="screen hidden">
+            
+            <h2 class="section-title">📋 سجل عمليات السحب</h2>
+            
+            <div id="history-list" class="history-list">
+                <p class="empty-msg">جاري تحميل السجل...</p>
+            </div>
+
+            <button id="btn-back-from-history" class="btn btn-secondary">
+                ⬅️ رجوع للصفحة الرئيسية
+            </button>
+
+        </section>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
