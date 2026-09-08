@@ -285,6 +285,18 @@ async def api_claim_ad(x_telegram_init_data: Optional[str] = Header(None)):
         "new_balance": new_balance
     }
 
+@api_app.get("/api/adsgram-reward")
+async def api_adsgram_reward(userid: Optional[int] = None):
+    """Webhook اختياري لـ Adsgram لإضافة المكافأة مباشرة من السيرفر"""
+    if userid:
+        success, message, new_balance = database.claim_ad_reward(
+            telegram_id=userid,
+            reward=config.REWARD_PER_AD,
+            cooldown_seconds=config.AD_COOLDOWN_SECONDS
+        )
+        return {"ok": True, "rewarded": success, "new_balance": new_balance}
+    return {"ok": False, "error": "missing userid"}
+
 @api_app.post("/api/withdraw")
 async def api_withdraw(body: WithdrawRequest, x_telegram_init_data: Optional[str] = Header(None)):
     user_info = get_authenticated_user(x_telegram_init_data)
