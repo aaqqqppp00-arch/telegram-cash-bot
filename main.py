@@ -159,7 +159,7 @@ async def handle_admin_callback(update: Update, context: ContextTypes.DEFAULT_TY
                     f"المبلغ: <b>{withdrawal['amount']:.2f} جنيه</b>\n"
                     f"المحفظة: <b>{p_name}</b>\n"
                     f"الرقم: <b>{withdrawal['phone_number']}</b>\n\n"
-                    "شكراً لوجودك معانا، تقدر تكمل فرجة على إعلانات وتسحب تاني في أي وقت."
+                    "شكراً لوجودك معانا، تقدر تكمل تعدين وتجمع عملات وتسحب تاني في أي وقت."
                 ),
                 parse_mode="HTML"
             )
