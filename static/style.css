@@ -1,5 +1,5 @@
 /* ==========================================================================
-   تصميم لعبة كروت ويكى (Modern Minimalist Game)
+   تصميم لعبة WEKI Miner (Modern Minimalist Web3 Clicker)
    - متوافق 100% مع شروط شبكات الإعلانات (Adsgram / Monetag)
    - زوايا حادة ومسطحة تماماً (Zero Border-Radius)
    - بدون أي أنيميشن أو بطء (Zero Animations)
@@ -43,10 +43,11 @@ body {
 }
 
 .main-title {
-    font-size: 22px;
-    font-weight: 800;
+    font-size: 24px;
+    font-weight: 900;
     letter-spacing: -0.5px;
     color: #09090b;
+    text-transform: uppercase;
 }
 
 .user-greeting {
@@ -90,7 +91,7 @@ body {
     display: none !important;
 }
 
-/* بطاقة رصيد النقاط الفخمة */
+/* بطاقة رصيد العملات */
 .balance-card {
     background-color: #09090b;
     color: #ffffff;
@@ -110,8 +111,8 @@ body {
 }
 
 .balance-amount {
-    font-size: 42px;
-    font-weight: 800;
+    font-size: 40px;
+    font-weight: 900;
     line-height: 1.1;
     color: #ffffff;
     letter-spacing: -1px;
@@ -119,7 +120,7 @@ body {
 
 .balance-amount small {
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 700;
     color: #10b981;
     margin-right: 4px;
 }
@@ -138,17 +139,17 @@ body {
     font-weight: 800;
 }
 
-/* شريط الإحصائيات والمحاولات */
+/* شريط الإحصائيات */
 .stat-card {
     display: flex;
     background-color: #fafafa;
     border: 1px solid #e4e4e7;
-    margin-bottom: 14px;
+    margin-bottom: 8px;
 }
 
 .stat-item {
     flex: 1;
-    padding: 12px 14px;
+    padding: 10px 14px;
     text-align: center;
 }
 
@@ -165,77 +166,78 @@ body {
 }
 
 .stat-val {
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 800;
     color: #09090b;
 }
 
-/* ساحة اللعبة: كروت الحظ */
-.game-box {
-    background-color: #fafafa;
-    border: 1px solid #e4e4e7;
-    padding: 16px;
-    margin-bottom: 14px;
-    text-align: center;
+/* شريط الطاقة */
+.energy-bar-container {
+    width: 100%;
+    height: 8px;
+    background-color: #e4e4e7;
+    border: 1px solid #d4d4d8;
+    margin-bottom: 16px;
+    overflow: hidden;
 }
 
-.game-instruction {
+.energy-bar-fill {
+    height: 100%;
+    background-color: #059669;
+}
+
+/* الزر المركزي للتعدين (Tap Box) */
+.mining-box {
     display: block;
-    font-size: 13px;
-    font-weight: 700;
-    color: #71717a;
-    margin-bottom: 12px;
-}
-
-.cards-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-}
-
-.game-card {
+    width: 100%;
     background-color: #09090b;
+    border: 2px solid #18181b;
     color: #ffffff;
-    border: 1px solid #18181b;
-    padding: 26px 6px;
-    font-size: 14px;
-    font-weight: 800;
+    padding: 36px 12px;
     cursor: pointer;
     text-align: center;
+    margin-bottom: 14px;
     user-select: none;
+    outline: none;
 }
 
-.game-card:active {
-    opacity: 0.85;
+.mining-box:active {
+    background-color: #18181b;
+    transform: scale(0.99);
 }
 
-.game-card.revealed {
-    background-color: #ecfdf5;
-    color: #065f46;
-    border: 1px solid #a7f3d0;
-}
-
-.game-card.revealed .card-front {
+.mine-title {
     display: block;
-    font-size: 20px;
+    font-size: 26px;
     font-weight: 900;
+    letter-spacing: -0.5px;
 }
 
-.game-card.revealed .card-back {
-    display: none;
+.mine-sub {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: #10b981;
+    margin-top: 4px;
 }
 
-/* الأزرار المسطحة */
+/* قسم المعززات */
+.boost-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
 .btn {
     display: block;
     width: 100%;
-    padding: 15px 16px;
-    font-size: 16px;
+    padding: 14px 16px;
+    font-size: 15px;
     font-weight: 700;
     text-align: center;
     cursor: pointer;
     border: 1px solid transparent;
-    margin-bottom: 12px;
     text-decoration: none;
     outline: none;
 }
@@ -244,18 +246,18 @@ body {
     opacity: 0.88;
 }
 
-/* زر شحن المحاولات بمشاهدة الفيديو */
-.btn-watch {
+/* زر شحن الطاقة بمشاهدة الفيديو */
+.btn-boost {
     background-color: #059669;
     color: #ffffff;
     border-color: #047857;
 }
 
-.btn-watch:hover {
+.btn-boost:hover {
     background-color: #047857;
 }
 
-.btn-watch:disabled {
+.btn-boost:disabled {
     background-color: #d4d4d8;
     color: #71717a;
     border-color: #d4d4d8;
@@ -263,17 +265,29 @@ body {
     opacity: 1;
 }
 
+/* زر ترقية جهاز التعدين */
+.btn-upgrade {
+    background-color: #ffffff;
+    color: #09090b;
+    border: 1px solid #09090b;
+}
+
+.btn-upgrade:hover {
+    background-color: #fafafa;
+}
+
 .divider {
     border: 0;
     border-top: 1px solid #f4f4f5;
-    margin: 18px 0;
+    margin: 16px 0;
 }
 
-/* زر التوجه للسحب */
+/* زر التوجه للمحفظة */
 .btn-withdraw-nav {
     background-color: #09090b;
     color: #ffffff;
     border-color: #09090b;
+    margin-bottom: 10px;
 }
 
 .btn-withdraw-nav:hover {
@@ -285,6 +299,7 @@ body {
     background-color: #ffffff;
     color: #09090b;
     border: 1px solid #e4e4e7;
+    margin-bottom: 10px;
 }
 
 .btn-secondary:hover {
@@ -296,7 +311,7 @@ body {
     background-color: #059669;
     color: #ffffff;
     border-color: #047857;
-    margin-top: 16px;
+    margin-top: 14px;
 }
 
 /* شاشة السحب */
@@ -316,7 +331,7 @@ body {
     padding: 10px 14px;
     font-size: 13px;
     font-weight: 600;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
     text-align: center;
 }
 

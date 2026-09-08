@@ -50,7 +50,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [
             InlineKeyboardButton(
-                "العب واكشف كروت الحظ",
+                "افتح لعبة WEKI Miner",
                 web_app=WebAppInfo(url=web_url)
             )
         ]
@@ -58,12 +58,12 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     welcome_text = (
-        f"أهلاً بيك يا <b>{user.first_name}</b> في لعبة <b>كروت ويكى</b>\n\n"
-        "ازاي تلعب وتكسب جوائز كاش؟\n"
-        "1. دوس على الزرار اللي تحت وافتح اللعبة.\n"
-        "2. اختار كروت الحظ واجمع نقاط.\n"
-        "3. اشحن محاولات مجانية بالفيديو عشان تضاعف نقاطك.\n"
-        "4. استبدل نقاطك بكاش على محفظتك (فودافون كاش، أورنج كاش، اتصالات كاش، وي كاش).\n\n"
+        f"أهلاً بيك يا <b>{user.first_name}</b> في لعبة <b>WEKI Miner</b>\n\n"
+        "لعبة تعدين وتجميع عملات WEKI:\n"
+        "1. اضغط للتعدين وجمع عملات WEKI.\n"
+        "2. طور جهاز التعدين بتاعك عشان تضاعف أرباحك.\n"
+        "3. اشحن طاقتك مجاناً بمشاهدة الفيديوهات.\n"
+        "4. استبدل عملاتك وسيبها على محفظتك في أي وقت.\n\n"
         f"أقل حد للاستبدال: {config.MIN_WITHDRAWAL} جنيه بس!"
     )
 
@@ -268,6 +268,32 @@ async def api_user_info(x_telegram_init_data: Optional[str] = Header(None)):
         }
     }
 
+@api_app.post("/api/tap")
+async def api_tap(x_telegram_init_data: Optional[str] = Header(None)):
+    """الضغط للتعدين في اللعبة"""
+    user_info = get_authenticated_user(x_telegram_init_data)
+    telegram_id = user_info["id"]
+
+    success, message, user = database.process_mining_tap(telegram_id)
+    return {
+        "success": success,
+        "message": message,
+        "user": user
+    }
+
+@api_app.post("/api/upgrade")
+async def api_upgrade(x_telegram_init_data: Optional[str] = Header(None)):
+    """ترقية مستوى التعدين بالعملات"""
+    user_info = get_authenticated_user(x_telegram_init_data)
+    telegram_id = user_info["id"]
+
+    success, message, user = database.upgrade_miner_level(telegram_id)
+    return {
+        "success": success,
+        "message": message,
+        "user": user
+    }
+
 @api_app.post("/api/claim-ad")
 async def api_claim_ad(x_telegram_init_data: Optional[str] = Header(None)):
     user_info = get_authenticated_user(x_telegram_init_data)
@@ -279,10 +305,12 @@ async def api_claim_ad(x_telegram_init_data: Optional[str] = Header(None)):
         cooldown_seconds=config.AD_COOLDOWN_SECONDS
     )
 
+    user = database.get_user(telegram_id)
     return {
         "success": success,
         "message": message,
-        "new_balance": new_balance
+        "new_balance": new_balance,
+        "user": user
     }
 
 @api_app.get("/api/adsgram-reward")

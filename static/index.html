@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>لعبة ويكى كاش</title>
+    <title>WEKI Miner</title>
     <!-- سكربت تليجرام الرسمي -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- مكتبة إعلانات Adsgram -->
@@ -20,81 +20,78 @@
         
         <!-- الترويسة الرئيسية للعبة -->
         <header class="app-header">
-            <h1 class="main-title">لعبة كروت ويكى</h1>
-            <p id="user-greeting" class="user-greeting">أهلاً بيك يا بطل</p>
+            <h1 class="main-title">WEKI Miner</h1>
+            <p id="user-greeting" class="user-greeting">أهلاً بيك في عالم التعدين</p>
         </header>
 
         <!-- رسالة التنبيهات العامة -->
         <div id="alert-box" class="alert-box hidden"></div>
 
-        <!-- ================= الشاشة 1: اللعبة وتجميع النقاط ================= -->
+        <!-- ================= الشاشة 1: اللعبة والتعدين ================= -->
         <section id="screen-home" class="screen active">
             
-            <!-- بطاقة النقاط والرصيد -->
+            <!-- بطاقة رصيد العملات -->
             <div class="card balance-card">
-                <span class="card-label">مجموع نقاطك في اللعبة</span>
-                <div class="balance-amount"><span id="user-points">0</span> <small>نقطة</small></div>
-                <div class="cash-value">القيمة بالكاش: <span id="user-balance">0.00</span> جنيه</div>
+                <span class="card-label">رصيد عملات WEKI المجمعة</span>
+                <div class="balance-amount"><span id="user-tokens">0</span> <small>$WEKI</small></div>
+                <div class="cash-value">القيمة التقديرية: <span id="user-balance">0.00</span> جنيه</div>
             </div>
 
-            <!-- معلومات محاولات اللعب -->
+            <!-- معلومات الطاقة ومستوى التعدين -->
             <div class="card stat-card">
                 <div class="stat-item">
-                    <span class="stat-title">المحاولات المتاحة:</span>
-                    <span id="game-attempts" class="stat-val">3</span>
+                    <span class="stat-title">مستوى التعدين:</span>
+                    <span id="miner-level" class="stat-val">مستوى 1 (+1)</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-title">الإعلانات المكتملة:</span>
-                    <span id="user-ads" class="stat-val">0</span>
+                    <span class="stat-title">الطاقة المتبقية:</span>
+                    <span id="miner-energy" class="stat-val">100 / 100</span>
                 </div>
             </div>
 
-            <!-- ساحة اللعبة: كروت الحظ الثلاثية -->
-            <div class="game-box">
-                <span class="game-instruction">اختار كارت من التلاتة واكشف نقاطك</span>
-                <div class="cards-grid">
-                    <div class="game-card" data-card="1">
-                        <span class="card-back">كارت 1</span>
-                        <span class="card-front hidden">+5</span>
-                    </div>
-                    <div class="game-card" data-card="2">
-                        <span class="card-back">كارت 2</span>
-                        <span class="card-front hidden">+5</span>
-                    </div>
-                    <div class="game-card" data-card="3">
-                        <span class="card-back">كارت 3</span>
-                        <span class="card-front hidden">+5</span>
-                    </div>
-                </div>
+            <!-- شريط الطاقة البصري البسيط -->
+            <div class="energy-bar-container">
+                <div id="energy-progress" class="energy-bar-fill" style="width: 100%;"></div>
             </div>
 
-            <!-- زر شحن المحاولات بمشاهدة الفيديو (نظام المكافآت المتوافق 100% مع شروط الإعلانات) -->
-            <button id="btn-watch-ad" class="btn btn-watch">
-                <span class="btn-text">شحن 3 محاولات مجاناً (مشاهدة فيديو)</span>
+            <!-- الزر الرئيسي الكبير للتعدين -->
+            <button id="btn-mine-tap" class="mining-box">
+                <span class="mine-title">اضغط للتعدين</span>
+                <span id="tap-gain-label" class="mine-sub">+1 عملة لكل ضغطة</span>
             </button>
+
+            <!-- أدوات ومعززات الطاقة (دمج إعلانات Adsgram كـ Boosters قانونية 100%) -->
+            <div class="boost-section">
+                <button id="btn-watch-ad" class="btn btn-boost">
+                    <span class="btn-text">شحن الطاقة بالكامل فوراً (مشاهدة فيديو)</span>
+                </button>
+                <button id="btn-upgrade-miner" class="btn btn-upgrade">
+                    <span class="btn-text" id="upgrade-btn-text">ترقية جهاز التعدين (100 عملة)</span>
+                </button>
+            </div>
 
             <hr class="divider">
 
-            <!-- زر التوجه لاستبدال النقاط وسحب الكاش -->
+            <!-- زر التوجه للمحفظة واستبدال العملات -->
             <button id="btn-go-withdraw" class="btn btn-withdraw-nav">
-                استبدال النقاط بجوائز كاش
+                محفظة استبدال العملات بكاش
             </button>
 
             <!-- زر سجل العمليات -->
             <button id="btn-go-history" class="btn btn-secondary">
-                سجل الجوائز والسحوبات
+                سجل عمليات التعدين والسحب
             </button>
 
         </section>
 
 
-        <!-- ================= الشاشة 2: متجر استبدال النقاط ================= -->
+        <!-- ================= الشاشة 2: محفظة استبدال العملات ================= -->
         <section id="screen-withdraw" class="screen hidden">
             
-            <h2 class="section-title">استبدال النقاط بجوائز كاش</h2>
+            <h2 class="section-title">محفظة استبدال عملات WEKI</h2>
             
             <div class="withdraw-rules">
-                أقل حد للاستبدال هو: <b id="min-points-text">2000</b> نقطة (تساوي <b id="min-withdraw-text">20</b> جنيه).
+                أقل حد لاستبدال العملات هو: <b id="min-tokens-text">2000</b> عملة (<b id="min-withdraw-text">20</b> جنيه).
             </div>
 
             <form id="withdraw-form">
@@ -125,17 +122,17 @@
                 <input type="tel" id="withdraw-phone" class="text-input" placeholder="مثال: 01012345678" maxlength="11" required>
 
                 <!-- المبلغ المراد سحبه -->
-                <label for="withdraw-amount" class="input-label">3. اكتب المبلغ اللي عايز تسحبه بالكاش (جنيه):</label>
+                <label for="withdraw-amount" class="input-label">3. اكتب المبلغ اللي عايز تسحبه (جنيه):</label>
                 <input type="number" id="withdraw-amount" class="text-input" placeholder="مثال: 20" step="any" required>
 
                 <!-- زر الإرسال -->
                 <button type="submit" id="btn-submit-withdraw" class="btn btn-submit">
-                    تأكيد استبدال النقاط
+                    تأكيد طلب السحب
                 </button>
             </form>
 
             <button id="btn-back-from-withdraw" class="btn btn-secondary">
-                رجوع للعبة
+                رجوع للتعدين
             </button>
 
         </section>
@@ -144,14 +141,14 @@
         <!-- ================= الشاشة 3: سجل السحوبات ================= -->
         <section id="screen-history" class="screen hidden">
             
-            <h2 class="section-title">سجل استبدال النقاط</h2>
+            <h2 class="section-title">سجل عمليات السحب</h2>
             
             <div id="history-list" class="history-list">
                 <p class="empty-msg">بيحمل السجل...</p>
             </div>
 
             <button id="btn-back-from-history" class="btn btn-secondary">
-                رجوع للعبة
+                رجوع للتعدين
             </button>
 
         </section>
