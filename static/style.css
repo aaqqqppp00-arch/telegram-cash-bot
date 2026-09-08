@@ -235,7 +235,13 @@ html, body {
     flex-shrink: 0;
 }
 
-.mining-gem {
+button.mining-gem, .mining-gem {
+    -webkit-appearance: none;
+    appearance: none;
+    padding: 0;
+    margin: 0;
+    outline: none;
+    touch-action: manipulation;
     width: 160px;
     height: 160px;
     background-color: #09090b;

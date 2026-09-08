@@ -77,11 +77,15 @@ def init_db():
 def calculate_energy(user: Dict[str, Any]) -> int:
     """إعادة شحن الطاقة تدريجياً مع مرور الوقت (نقطة كل 3 ثواني)"""
     now = int(time.time())
-    last_time = user.get("last_energy_timestamp") or now
-    elapsed = max(0, now - last_time)
+    last_time = user.get("last_energy_timestamp")
     current_energy = user.get("energy", 100)
     max_energy = user.get("max_energy", 100)
     
+    # إذا كان المستخدم جديد أو لم يُسجل وقت، تكون طاقته كاملة
+    if not last_time:
+        return max_energy
+
+    elapsed = max(0, now - last_time)
     recovered = elapsed // 3 # استرجاع نقطة طاقة كل 3 ثواني
     new_energy = min(max_energy, current_energy + recovered)
     return new_energy

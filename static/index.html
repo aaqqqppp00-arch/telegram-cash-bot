@@ -61,7 +61,7 @@
             <!-- منطقة التعدين المبتكرة الهندسية (شعار تعدين ماسي بدون انحناءات وبدون سكرول) -->
             <div class="mining-stage">
                 <div id="tap-particles" class="tap-particles"></div>
-                <div id="btn-mine-tap" class="mining-gem" role="button" tabindex="0">
+                <button id="btn-mine-tap" class="mining-gem" type="button" onclick="onUserTap(event)">
                     <div class="gem-content">
                         <svg class="gem-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <!-- فأس تعدين ومكعب طاقة هندسي حاد تماماً -->
@@ -74,7 +74,7 @@
                         <span class="gem-title">انقر للتعدين</span>
                         <span id="tap-gain-label" class="gem-sub">+1 عملة لكل نقرة</span>
                     </div>
-                </div>
+                </button>
             </div>
 
             <!-- أدوات ومعززات الطاقة -->

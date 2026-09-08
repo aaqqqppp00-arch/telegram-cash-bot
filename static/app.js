@@ -168,22 +168,33 @@ function initAdsgram() {
 
 // إظهار رقم عائم مكان النقرة (+1)
 function spawnTapPop(clientX, clientY, amount) {
-    if (!tapParticles) return;
-    const stageRect = tapParticles.getBoundingClientRect();
-    const x = clientX ? clientX - stageRect.left : stageRect.width / 2;
-    const y = clientY ? clientY - stageRect.top : stageRect.height / 2;
+    try {
+        if (!tapParticles) return;
+        const stageRect = tapParticles.getBoundingClientRect();
+        let x = stageRect.width / 2;
+        let y = stageRect.height / 2;
 
-    const pop = document.createElement("span");
-    pop.className = "tap-pop";
-    pop.innerText = `+${amount}`;
-    pop.style.left = `${x}px`;
-    pop.style.top = `${y}px`;
+        if (clientX && clientX > 0 && stageRect.left !== undefined) {
+            x = Math.max(20, Math.min(stageRect.width - 20, clientX - stageRect.left));
+        }
+        if (clientY && clientY > 0 && stageRect.top !== undefined) {
+            y = Math.max(20, Math.min(stageRect.height - 20, clientY - stageRect.top));
+        }
 
-    tapParticles.appendChild(pop);
+        const pop = document.createElement("span");
+        pop.className = "tap-pop";
+        pop.innerText = `+${amount}`;
+        pop.style.left = `${x}px`;
+        pop.style.top = `${y}px`;
 
-    setTimeout(() => {
-        pop.remove();
-    }, 450);
+        tapParticles.appendChild(pop);
+
+        setTimeout(() => {
+            pop.remove();
+        }, 450);
+    } catch (err) {
+        console.warn("spawnTapPop error:", err);
+    }
 }
 
 // معالجة النقر محلياً وفورياً
@@ -258,18 +269,58 @@ async function syncTapsWithServer() {
     }
 }
 
-// ربط أحداث اللمس والنقر مع منع السكرول نهائياً أثناء التعدين
-if (btnMineTap) {
-    btnMineTap.addEventListener("touchstart", (e) => {
-        e.preventDefault(); // يمنع السكرول والاهتزاز تماماً على الموبايل
-        const touch = e.touches[0];
-        handleTap(touch.clientX, touch.clientY);
-    }, { passive: false });
+// نظام التقاط النقرات الفوري الشامل لكل أنواع الأجهزة (لمس، ماوس، كمبيوتر، موبايل)
+let lastTapTimestamp = 0;
 
-    btnMineTap.addEventListener("mousedown", (e) => {
-        // للمتصفح على الكمبيوتر
-        handleTap(e.clientX, e.clientY);
-    });
+function onUserTap(e) {
+    if (e) {
+        if (e.stopPropagation) e.stopPropagation();
+        if (e.cancelable && e.type !== "click") {
+            e.preventDefault();
+        }
+    }
+
+    const now = Date.now();
+    if (now - lastTapTimestamp < 80) {
+        return; // منع الضغط المزدوج المكرر من نفس الحدث
+    }
+    lastTapTimestamp = now;
+
+    let clientX = 0;
+    let clientY = 0;
+    if (e) {
+        if (e.touches && e.touches.length > 0) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else if (e.clientX !== undefined) {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        }
+    }
+
+    handleTap(clientX, clientY);
+}
+
+// جعلها عامة للوصول إليها
+window.onUserTap = onUserTap;
+
+if (btnMineTap) {
+    // 1. استجابة 0ms بـ pointerdown لجميع الشاشات
+    btnMineTap.addEventListener("pointerdown", onUserTap, { passive: false });
+    // 2. كليك أساسي لمتصفحات تليجرام المختلفة
+    btnMineTap.addEventListener("click", onUserTap);
+    // 3. لمس مباشر للموبايل القديم
+    btnMineTap.addEventListener("touchstart", onUserTap, { passive: false });
+}
+
+// إتاحة النقر في كامل مساحة التعدين لسهولة اللعب
+const miningStage = document.querySelector(".mining-stage");
+if (miningStage) {
+    miningStage.addEventListener("pointerdown", (e) => {
+        if (e.target === miningStage || (e.target && e.target.id === "tap-particles")) {
+            onUserTap(e);
+        }
+    }, { passive: false });
 }
 
 // مزامنة فورية عند مغادرة الصفحة أو قفل التطبيق
@@ -313,7 +364,7 @@ btnUpgradeMiner.addEventListener("click", async () => {
 btnWatchAd.addEventListener("click", async () => {
     btnWatchAd.disabled = true;
     const originalText = btnWatchAd.innerHTML;
-    btnWatchAd.innerHTML = "<span class="btn-text">جاري تشغيل الفيديو...</span>";
+    btnWatchAd.innerHTML = "<span class=\"btn-text\">جاري تشغيل الفيديو...</span>";
 
     if (adController) {
         adController.show().then(() => {
@@ -420,7 +471,7 @@ withdrawForm.addEventListener("submit", async (e) => {
 
 // تحميل سجل السحوبات
 async function loadWithdrawalHistory() {
-    historyList.innerHTML = "<p class="empty-msg">بيحمل السجل...</p>";
+    historyList.innerHTML = "<p class='empty-msg'>بيحمل السجل...</p>";
 
     try {
         const res = await fetch("/api/withdrawals", {
@@ -442,11 +493,11 @@ async function loadWithdrawalHistory() {
 
                 let statusBadge = "";
                 if (item.status === "pending") {
-                    statusBadge = "<span class="history-status status-pending">مستني الموافقة</span>";
+                    statusBadge = "<span class='history-status status-pending'>مستني الموافقة</span>";
                 } else if (item.status === "approved") {
-                    statusBadge = "<span class="history-status status-approved">تم التحويل</span>";
+                    statusBadge = "<span class='history-status status-approved'>تم التحويل</span>";
                 } else {
-                    statusBadge = "<span class="history-status status-rejected">مرفوض ومسترد</span>";
+                    statusBadge = "<span class='history-status status-rejected'>مرفوض ومسترد</span>";
                 }
 
                 const providerName = {
@@ -471,11 +522,11 @@ async function loadWithdrawalHistory() {
                 historyList.appendChild(div);
             });
         } else {
-            historyList.innerHTML = "<p class="empty-msg">لسه مفيش أي طلبات سحب سابقة.</p>";
+            historyList.innerHTML = "<p class='empty-msg'>لسه مفيش أي طلبات سحب سابقة.</p>";
         }
     } catch (err) {
         console.error("Error loading history:", err);
-        historyList.innerHTML = "<p class="empty-msg">حصلت مشكلة في تحميل السجل.</p>";
+        historyList.innerHTML = "<p class='empty-msg'>حصلت مشكلة في تحميل السجل.</p>";
     }
 }
 
