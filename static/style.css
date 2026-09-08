@@ -1,17 +1,17 @@
 /* ==========================================================================
-   تصميم حديث فائق البساطة والأناقة (Modern Minimalist Swiss / FinTech)
-   - بدون أي زوايا منحنية نهائياً (Zero Border-Radius)
-   - بدون أنيميشن أو حركات مزعجة (Zero Animations)
-   - بدون بهرجة أو زحمة (Zero Clutter)
-   - خطوط عربية عصرية وحدود رفيعة حادة عالية الدقة
+   تصميم لعبة كروت ويكى (Modern Minimalist Game)
+   - متوافق 100% مع شروط شبكات الإعلانات (Adsgram / Monetag)
+   - زوايا حادة ومسطحة تماماً (Zero Border-Radius)
+   - بدون أي أنيميشن أو بطء (Zero Animations)
+   - خطوط عصرية أنيقة خالية من أي إيموجي أو بهرجة
    ========================================================================== */
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    border-radius: 0px !important; /* ممنوع الزوايا المنحنية تماماً */
-    transition: none !important;   /* بدون أي أنيميشن أو تأثيرات بطيئة */
+    border-radius: 0px !important;
+    transition: none !important;
     animation: none !important;
     -webkit-tap-highlight-color: transparent;
     font-family: 'Cairo', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -37,8 +37,8 @@ body {
 /* الترويسة العلوية */
 .app-header {
     text-align: center;
-    padding-bottom: 16px;
-    margin-bottom: 20px;
+    padding-bottom: 14px;
+    margin-bottom: 18px;
     border-bottom: 1px solid #f4f4f5;
 }
 
@@ -51,12 +51,12 @@ body {
 
 .user-greeting {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     color: #71717a;
     margin-top: 2px;
 }
 
-/* شريط التنبيهات الحديث */
+/* شريط التنبيهات */
 .alert-box {
     padding: 12px 14px;
     margin-bottom: 16px;
@@ -90,12 +90,12 @@ body {
     display: none !important;
 }
 
-/* بطاقة الرصيد (تصميم بطاقة مالية داكنة فخمة وحادة) */
+/* بطاقة رصيد النقاط الفخمة */
 .balance-card {
     background-color: #09090b;
     color: #ffffff;
     border: 1px solid #18181b;
-    padding: 24px 20px;
+    padding: 22px 18px;
     margin-bottom: 14px;
     text-align: center;
 }
@@ -105,7 +105,6 @@ body {
     font-size: 13px;
     font-weight: 600;
     color: #a1a1aa;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 6px;
 }
@@ -121,16 +120,30 @@ body {
 .balance-amount small {
     font-size: 18px;
     font-weight: 600;
-    color: #10b981; /* أخضر زمردي راقي */
+    color: #10b981;
     margin-right: 4px;
 }
 
-/* بطاقة الإحصائيات (شريط بيانات نظيف ومقسم) */
+.cash-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #a1a1aa;
+    margin-top: 8px;
+    border-top: 1px solid #27272a;
+    padding-top: 8px;
+}
+
+.cash-value span {
+    color: #ffffff;
+    font-weight: 800;
+}
+
+/* شريط الإحصائيات والمحاولات */
 .stat-card {
     display: flex;
     background-color: #fafafa;
     border: 1px solid #e4e4e7;
-    margin-bottom: 18px;
+    margin-bottom: 14px;
 }
 
 .stat-item {
@@ -152,12 +165,67 @@ body {
 }
 
 .stat-val {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 800;
     color: #09090b;
 }
 
-/* الأزرار العصرية المسطحة */
+/* ساحة اللعبة: كروت الحظ */
+.game-box {
+    background-color: #fafafa;
+    border: 1px solid #e4e4e7;
+    padding: 16px;
+    margin-bottom: 14px;
+    text-align: center;
+}
+
+.game-instruction {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: #71717a;
+    margin-bottom: 12px;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+}
+
+.game-card {
+    background-color: #09090b;
+    color: #ffffff;
+    border: 1px solid #18181b;
+    padding: 26px 6px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    text-align: center;
+    user-select: none;
+}
+
+.game-card:active {
+    opacity: 0.85;
+}
+
+.game-card.revealed {
+    background-color: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.game-card.revealed .card-front {
+    display: block;
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.game-card.revealed .card-back {
+    display: none;
+}
+
+/* الأزرار المسطحة */
 .btn {
     display: block;
     width: 100%;
@@ -176,7 +244,7 @@ body {
     opacity: 0.88;
 }
 
-/* زر مشاهدة الإعلان الرئيسي (أخضر زمردي مسطح راقي) */
+/* زر شحن المحاولات بمشاهدة الفيديو */
 .btn-watch {
     background-color: #059669;
     color: #ffffff;
@@ -195,30 +263,13 @@ body {
     opacity: 1;
 }
 
-.btn-icon {
-    margin-left: 6px;
-    font-size: 15px;
-}
-
-/* صندوق الإرشادات البسيط */
-.help-box {
-    background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-right: 3px solid #09090b;
-    padding: 12px 14px;
-    font-size: 13px;
-    color: #475569;
-    line-height: 1.6;
-    margin-bottom: 20px;
-}
-
 .divider {
     border: 0;
     border-top: 1px solid #f4f4f5;
-    margin: 20px 0;
+    margin: 18px 0;
 }
 
-/* زر التوجه لصفحة السحب (أسود مسطح أنيق) */
+/* زر التوجه للسحب */
 .btn-withdraw-nav {
     background-color: #09090b;
     color: #ffffff;
@@ -229,7 +280,7 @@ body {
     background-color: #18181b;
 }
 
-/* زر ثانوي / رجوع (أبيض محدد بنعومة) */
+/* زر ثانوي / رجوع */
 .btn-secondary {
     background-color: #ffffff;
     color: #09090b;
@@ -240,7 +291,7 @@ body {
     background-color: #fafafa;
 }
 
-/* زر تأكيد السحب */
+/* زر تأكيد استبدال النقاط */
 .btn-submit {
     background-color: #059669;
     color: #ffffff;
@@ -278,7 +329,6 @@ body {
     margin-bottom: 6px;
 }
 
-/* الحقول والمدخلات الحديثة */
 .text-input {
     width: 100%;
     padding: 13px 14px;
@@ -300,7 +350,7 @@ body {
     font-weight: normal;
 }
 
-/* شبكة اختيار المحفظة (أزرار مسطحة نظيفة بدون زحمة) */
+/* شبكة اختيار المحفظة */
 .wallets-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -328,29 +378,28 @@ body {
     color: #3f3f46;
 }
 
-/* حالة المحفظة المختارة (إطار أسود حاد وعلامة هوية الشركة) */
 .wallet-option input[type="radio"]:checked + .wallet-box {
     color: #ffffff;
     border: 1px solid transparent;
 }
 
 .wallet-option input[type="radio"]:checked + .wallet-box.vf {
-    background-color: #dc2626; /* أحمر فودافون حديث */
+    background-color: #dc2626;
 }
 
 .wallet-option input[type="radio"]:checked + .wallet-box.og {
-    background-color: #ea580c; /* برتقالي أورنج حديث */
+    background-color: #ea580c;
 }
 
 .wallet-option input[type="radio"]:checked + .wallet-box.et {
-    background-color: #16a34a; /* أخضر اتصالات حديث */
+    background-color: #16a34a;
 }
 
 .wallet-option input[type="radio"]:checked + .wallet-box.we {
-    background-color: #7c3aed; /* بنفسجي وي حديث */
+    background-color: #7c3aed;
 }
 
-/* سجل السحوبات الحديث */
+/* سجل العمليات */
 .history-list {
     margin-bottom: 18px;
 }

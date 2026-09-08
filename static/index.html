@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>أرباح كاش</title>
+    <title>لعبة ويكى كاش</title>
     <!-- سكربت تليجرام الرسمي -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- مكتبة إعلانات Adsgram -->
@@ -18,69 +18,89 @@
 
     <div class="container">
         
-        <!-- الترويسة الرئيسية -->
+        <!-- الترويسة الرئيسية للعبة -->
         <header class="app-header">
-            <h1 class="main-title">أرباح كاش</h1>
-            <p id="user-greeting" class="user-greeting">أهلاً بيك</p>
+            <h1 class="main-title">لعبة كروت ويكى</h1>
+            <p id="user-greeting" class="user-greeting">أهلاً بيك يا بطل</p>
         </header>
 
         <!-- رسالة التنبيهات العامة -->
         <div id="alert-box" class="alert-box hidden"></div>
 
-        <!-- ================= الشاشة 1: الرئيسية والربح ================= -->
+        <!-- ================= الشاشة 1: اللعبة وتجميع النقاط ================= -->
         <section id="screen-home" class="screen active">
             
-            <!-- صندوق الرصيد -->
+            <!-- بطاقة النقاط والرصيد -->
             <div class="card balance-card">
-                <span class="card-label">رصيدك الحالي</span>
-                <div class="balance-amount"><span id="user-balance">0.00</span> <small>جنيه</small></div>
+                <span class="card-label">مجموع نقاطك في اللعبة</span>
+                <div class="balance-amount"><span id="user-points">0</span> <small>نقطة</small></div>
+                <div class="cash-value">القيمة بالكاش: <span id="user-balance">0.00</span> جنيه</div>
             </div>
 
-            <!-- صندوق عدد الإعلانات -->
+            <!-- معلومات محاولات اللعب -->
             <div class="card stat-card">
                 <div class="stat-item">
-                    <span class="stat-title">إعلانات شوفتها النهاردة:</span>
-                    <span id="user-ads" class="stat-val">0</span>
+                    <span class="stat-title">المحاولات المتاحة:</span>
+                    <span id="game-attempts" class="stat-val">3</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-title">مكافأة الإعلان:</span>
-                    <span id="reward-rate" class="stat-val">0.05 جنيه</span>
+                    <span class="stat-title">الإعلانات المكتملة:</span>
+                    <span id="user-ads" class="stat-val">0</span>
                 </div>
             </div>
 
-            <!-- زر مشاهدة الإعلان -->
+            <!-- ساحة اللعبة: كروت الحظ الثلاثية -->
+            <div class="game-box">
+                <span class="game-instruction">اختار كارت من التلاتة واكشف نقاطك</span>
+                <div class="cards-grid">
+                    <div class="game-card" data-card="1">
+                        <span class="card-back">كارت 1</span>
+                        <span class="card-front hidden">+5</span>
+                    </div>
+                    <div class="game-card" data-card="2">
+                        <span class="card-back">كارت 2</span>
+                        <span class="card-front hidden">+5</span>
+                    </div>
+                    <div class="game-card" data-card="3">
+                        <span class="card-back">كارت 3</span>
+                        <span class="card-front hidden">+5</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- زر شحن المحاولات بمشاهدة الفيديو (نظام المكافآت المتوافق 100% مع شروط الإعلانات) -->
             <button id="btn-watch-ad" class="btn btn-watch">
-                <span class="btn-text">اتفرج على إعلان واكسب</span>
+                <span class="btn-text">شحن 3 محاولات مجاناً (مشاهدة فيديو)</span>
             </button>
 
             <hr class="divider">
 
-            <!-- زر التوجه للسحب -->
+            <!-- زر التوجه لاستبدال النقاط وسحب الكاش -->
             <button id="btn-go-withdraw" class="btn btn-withdraw-nav">
-                اسحب فلوسك كاش
+                استبدال النقاط بجوائز كاش
             </button>
 
-            <!-- زر سجل السحوبات -->
+            <!-- زر سجل العمليات -->
             <button id="btn-go-history" class="btn btn-secondary">
-                سجل طلبات السحب
+                سجل الجوائز والسحوبات
             </button>
 
         </section>
 
 
-        <!-- ================= الشاشة 2: سحب الفلوس ================= -->
+        <!-- ================= الشاشة 2: متجر استبدال النقاط ================= -->
         <section id="screen-withdraw" class="screen hidden">
             
-            <h2 class="section-title">سحب الفلوس على محفظتك</h2>
+            <h2 class="section-title">استبدال النقاط بجوائز كاش</h2>
             
             <div class="withdraw-rules">
-                أقل مبلغ تقدر تسحبه هو: <b id="min-withdraw-text">20</b> جنيه.
+                أقل حد للاستبدال هو: <b id="min-points-text">2000</b> نقطة (تساوي <b id="min-withdraw-text">20</b> جنيه).
             </div>
 
             <form id="withdraw-form">
                 
                 <!-- اختيار المحفظة -->
-                <label class="input-label">1. اختار شركتك:</label>
+                <label class="input-label">1. اختار محفظتك:</label>
                 <div class="wallets-grid">
                     <label class="wallet-option">
                         <input type="radio" name="provider" value="vodafone_cash" checked>
@@ -101,21 +121,21 @@
                 </div>
 
                 <!-- رقم الموبايل -->
-                <label for="withdraw-phone" class="input-label">2. اكتب رقم الموبايل (11 رقم):</label>
+                <label for="withdraw-phone" class="input-label">2. اكتب رقم الموبايل المسجل عليه المحفظة:</label>
                 <input type="tel" id="withdraw-phone" class="text-input" placeholder="مثال: 01012345678" maxlength="11" required>
 
                 <!-- المبلغ المراد سحبه -->
-                <label for="withdraw-amount" class="input-label">3. اكتب المبلغ اللي عايز تسحبه:</label>
+                <label for="withdraw-amount" class="input-label">3. اكتب المبلغ اللي عايز تسحبه بالكاش (جنيه):</label>
                 <input type="number" id="withdraw-amount" class="text-input" placeholder="مثال: 20" step="any" required>
 
                 <!-- زر الإرسال -->
                 <button type="submit" id="btn-submit-withdraw" class="btn btn-submit">
-                    ابعت طلب السحب
+                    تأكيد استبدال النقاط
                 </button>
             </form>
 
             <button id="btn-back-from-withdraw" class="btn btn-secondary">
-                رجوع للصفحة الرئيسية
+                رجوع للعبة
             </button>
 
         </section>
@@ -124,14 +144,14 @@
         <!-- ================= الشاشة 3: سجل السحوبات ================= -->
         <section id="screen-history" class="screen hidden">
             
-            <h2 class="section-title">سجل السحوبات</h2>
+            <h2 class="section-title">سجل استبدال النقاط</h2>
             
             <div id="history-list" class="history-list">
                 <p class="empty-msg">بيحمل السجل...</p>
             </div>
 
             <button id="btn-back-from-history" class="btn btn-secondary">
-                رجوع للصفحة الرئيسية
+                رجوع للعبة
             </button>
 
         </section>

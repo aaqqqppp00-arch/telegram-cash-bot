@@ -50,7 +50,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [
             InlineKeyboardButton(
-                "افتح محفظة الأرباح",
+                "العب واكشف كروت الحظ",
                 web_app=WebAppInfo(url=web_url)
             )
         ]
@@ -58,13 +58,13 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     welcome_text = (
-        f"أهلاً بيك يا <b>{user.first_name}</b> في بوت <b>أرباح كاش</b>\n\n"
-        "ازاي تكسب من البوت؟\n"
-        "1. دوس على الزرار اللي تحت وافتح التطبيق.\n"
-        "2. اتفرج على الإعلانات وجمع فلوس في رصيدك.\n"
-        "3. اسحب فلوسك على محفظتك (فودافون كاش، أورنج كاش، اتصالات كاش، وي كاش).\n\n"
-        f"المكافأة: {config.REWARD_PER_AD} جنيه على كل إعلان.\n"
-        f"أقل مبلغ للسحب: {config.MIN_WITHDRAWAL} جنيه بس!"
+        f"أهلاً بيك يا <b>{user.first_name}</b> في لعبة <b>كروت ويكى</b>\n\n"
+        "ازاي تلعب وتكسب جوائز كاش؟\n"
+        "1. دوس على الزرار اللي تحت وافتح اللعبة.\n"
+        "2. اختار كروت الحظ واجمع نقاط.\n"
+        "3. اشحن محاولات مجانية بالفيديو عشان تضاعف نقاطك.\n"
+        "4. استبدل نقاطك بكاش على محفظتك (فودافون كاش، أورنج كاش، اتصالات كاش، وي كاش).\n\n"
+        f"أقل حد للاستبدال: {config.MIN_WITHDRAWAL} جنيه بس!"
     )
 
     await update.message.reply_html(welcome_text, reply_markup=reply_markup)
