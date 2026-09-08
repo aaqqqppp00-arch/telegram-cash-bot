@@ -11,7 +11,7 @@
     <!-- خط عربي حديث وأنيق -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -34,7 +34,8 @@
             <div class="card balance-card">
                 <span class="card-label">رصيد عملات WEKI المجمعة</span>
                 <div class="balance-amount"><span id="user-tokens">0</span> <small>$WEKI</small></div>
-                <div class="cash-value">القيمة التقديرية: <span id="user-balance">0.00</span> جنيه</div>
+                <div class="cash-value">القيمة التقديرية: <span id="user-balance">0.00</span> جنيه مصري</div>
+                <div class="balance-note">عملاتك بتزيد مع كل نقرة ومابتنقصش أبداً إلا وقت السحب</div>
             </div>
 
             <!-- معلومات الطاقة ومستوى التعدين -->
@@ -44,29 +45,45 @@
                     <span id="miner-level" class="stat-val">مستوى 1 (+1)</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-title">الطاقة المتبقية:</span>
+                    <span class="stat-title">طاقة البطارية:</span>
                     <span id="miner-energy" class="stat-val">100 / 100</span>
                 </div>
             </div>
 
-            <!-- شريط الطاقة البصري البسيط -->
-            <div class="energy-bar-container">
-                <div id="energy-progress" class="energy-bar-fill" style="width: 100%;"></div>
+            <!-- شريط الطاقة وتوضيح الشحن التلقائي -->
+            <div class="energy-section">
+                <div class="energy-bar-container">
+                    <div id="energy-progress" class="energy-bar-fill" style="width: 100%;"></div>
+                </div>
+                <div class="energy-note">البطارية بتتشحن تلقائياً وأنت قافل التطبيق، أو فوري بمشاهدة فيديو</div>
             </div>
 
-            <!-- الزر الرئيسي الكبير للتعدين -->
-            <button id="btn-mine-tap" class="mining-box">
-                <span class="mine-title">اضغط للتعدين</span>
-                <span id="tap-gain-label" class="mine-sub">+1 عملة لكل ضغطة</span>
-            </button>
+            <!-- منطقة التعدين المبتكرة الهندسية (شعار تعدين ماسي بدون انحناءات وبدون سكرول) -->
+            <div class="mining-stage">
+                <div id="tap-particles" class="tap-particles"></div>
+                <div id="btn-mine-tap" class="mining-gem" role="button" tabindex="0">
+                    <div class="gem-content">
+                        <svg class="gem-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- فأس تعدين ومكعب طاقة هندسي حاد تماماً -->
+                            <line x1="14" y1="50" x2="38" y2="26" stroke="#10b981" stroke-width="4"/>
+                            <rect x="8" y="48" width="8" height="8" fill="#10b981"/>
+                            <polygon points="32,16 46,6 56,16 42,26" fill="#18181b" stroke="#10b981" stroke-width="2"/>
+                            <polygon points="40,24 50,34 58,24 48,14" fill="#09090b" stroke="#10b981" stroke-width="2"/>
+                            <polygon points="22,12 28,6 34,14 26,20" fill="#10b981"/>
+                        </svg>
+                        <span class="gem-title">انقر للتعدين</span>
+                        <span id="tap-gain-label" class="gem-sub">+1 عملة لكل نقرة</span>
+                    </div>
+                </div>
+            </div>
 
-            <!-- أدوات ومعززات الطاقة (دمج إعلانات Adsgram كـ Boosters قانونية 100%) -->
+            <!-- أدوات ومعززات الطاقة -->
             <div class="boost-section">
                 <button id="btn-watch-ad" class="btn btn-boost">
-                    <span class="btn-text">شحن الطاقة بالكامل فوراً (مشاهدة فيديو)</span>
+                    <span class="btn-text">شحن البطارية فوراً (مشاهدة فيديو)</span>
                 </button>
                 <button id="btn-upgrade-miner" class="btn btn-upgrade">
-                    <span class="btn-text" id="upgrade-btn-text">ترقية جهاز التعدين (100 عملة)</span>
+                    <span class="btn-text" id="upgrade-btn-text">ترقية جهاز التعدين (500 عملة)</span>
                 </button>
             </div>
 
@@ -91,7 +108,7 @@
             <h2 class="section-title">محفظة استبدال عملات WEKI</h2>
             
             <div class="withdraw-rules">
-                أقل حد لاستبدال العملات هو: <b id="min-tokens-text">2000</b> عملة (<b id="min-withdraw-text">20</b> جنيه).
+                أقل حد لاستبدال العملات هو: <b id="min-tokens-text">100,000</b> عملة (<b id="min-withdraw-text">20</b> جنيه).
             </div>
 
             <form id="withdraw-form">

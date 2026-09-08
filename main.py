@@ -231,6 +231,9 @@ async def get_js():
 
 # --- نماذج الـ API ---
 
+class TapRequest(BaseModel):
+    count: Optional[int] = 1
+
 class WithdrawRequest(BaseModel):
     provider: str
     phone_number: str
@@ -264,17 +267,19 @@ async def api_user_info(x_telegram_init_data: Optional[str] = Header(None)):
         "config": {
             "reward_per_ad": config.REWARD_PER_AD,
             "min_withdrawal": config.MIN_WITHDRAWAL,
+            "tokens_per_egp": config.TOKENS_PER_EGP,
             "adsgram_block_id": config.ADSGRAM_BLOCK_ID
         }
     }
 
 @api_app.post("/api/tap")
-async def api_tap(x_telegram_init_data: Optional[str] = Header(None)):
-    """الضغط للتعدين في اللعبة"""
+async def api_tap(body: Optional[TapRequest] = None, x_telegram_init_data: Optional[str] = Header(None)):
+    """الضغط للتعدين في اللعبة (يدعم تجميع الضغطات)"""
     user_info = get_authenticated_user(x_telegram_init_data)
     telegram_id = user_info["id"]
+    count = body.count if body and body.count else 1
 
-    success, message, user = database.process_mining_tap(telegram_id)
+    success, message, user = database.process_mining_tap(telegram_id, count=count)
     return {
         "success": success,
         "message": message,

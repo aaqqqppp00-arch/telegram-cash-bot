@@ -1,8 +1,11 @@
-// تهيئة تليجرام ويب آب
+// تهيئة تليجرام ويب آب ومنع السكرول والاهتزاز الرأسي
 const tg = window.Telegram?.WebApp;
 if (tg) {
     tg.ready();
     tg.expand();
+    if (tg.disableVerticalSwipes) {
+        tg.disableVerticalSwipes();
+    }
 }
 
 // عناصر واجهة اللعبة
@@ -17,6 +20,7 @@ const upgradeBtnText = document.getElementById("upgrade-btn-text");
 const minTokensText = document.getElementById("min-tokens-text");
 const minWithdrawText = document.getElementById("min-withdraw-text");
 const alertBox = document.getElementById("alert-box");
+const tapParticles = document.getElementById("tap-particles");
 
 // الشاشات
 const screenHome = document.getElementById("screen-home");
@@ -45,10 +49,15 @@ let currentEnergy = 100;
 let maxEnergy = 100;
 let minerLevel = 1;
 let minWithdrawal = 20.0;
+let tokensPerEgp = 5000;
 let rewardAmount = 0.05;
 let adsgramBlockId = "";
 let adController = null;
-let isTapping = false;
+
+// نظام تجميع الضغطات لمنع أي فقدان أو قفزات في العداد
+let pendingTaps = 0;
+let syncTimer = null;
+let isSyncing = false;
 
 // التحقق من هوية تليجرام
 const initData = tg?.initData || "user=" + encodeURIComponent(JSON.stringify({
@@ -61,11 +70,10 @@ const initData = tg?.initData || "user=" + encodeURIComponent(JSON.stringify({
 function showAlert(message, type = "info") {
     alertBox.className = `alert-box ${type}`;
     alertBox.innerText = message;
-    alertBox.scrollIntoView({ behavior: "smooth" });
     
     setTimeout(() => {
         alertBox.className = "alert-box hidden";
-    }, 4500);
+    }, 4000);
 }
 
 // التنقل بين الشاشات
@@ -102,8 +110,8 @@ function updateUIFromUser(user) {
     userTokensEl.innerText = currentTokens.toLocaleString();
     userBalanceEl.innerText = currentBalance.toFixed(2);
     minerLevelEl.innerText = `مستوى ${minerLevel} (+${minerLevel})`;
-    tapGainLabel.innerText = `+${minerLevel} عملة لكل ضغطة`;
-    upgradeBtnText.innerText = `ترقية جهاز التعدين (${minerLevel * 100} عملة)`;
+    tapGainLabel.innerText = `+${minerLevel} عملة لكل نقرة`;
+    upgradeBtnText.innerText = `ترقية جهاز التعدين (${minerLevel * 500} عملة)`;
     updateEnergyDisplay();
 }
 
@@ -126,13 +134,15 @@ async function loadUserData() {
         const data = await res.json();
         
         if (data.success) {
-            updateUIFromUser(data.user);
-            minWithdrawal = data.config.min_withdrawal;
-            rewardAmount = data.config.reward_per_ad;
+            tokensPerEgp = data.config.tokens_per_egp || 5000;
+            minWithdrawal = data.config.min_withdrawal || 20.0;
+            rewardAmount = data.config.reward_per_ad || 0.05;
             adsgramBlockId = data.config.adsgram_block_id;
 
+            updateUIFromUser(data.user);
+
             userGreeting.innerText = `أهلاً بيك يا ${data.user.first_name || "المعدّن"}`;
-            minTokensText.innerText = (minWithdrawal * 100).toLocaleString();
+            minTokensText.innerText = (minWithdrawal * tokensPerEgp).toLocaleString();
             minWithdrawText.innerText = minWithdrawal.toFixed(0);
 
             initAdsgram();
@@ -156,53 +166,124 @@ function initAdsgram() {
     }
 }
 
-// الضغط للتعدين (Tap to Mine)
-btnMineTap.addEventListener("click", async () => {
+// إظهار رقم عائم مكان النقرة (+1)
+function spawnTapPop(clientX, clientY, amount) {
+    if (!tapParticles) return;
+    const stageRect = tapParticles.getBoundingClientRect();
+    const x = clientX ? clientX - stageRect.left : stageRect.width / 2;
+    const y = clientY ? clientY - stageRect.top : stageRect.height / 2;
+
+    const pop = document.createElement("span");
+    pop.className = "tap-pop";
+    pop.innerText = `+${amount}`;
+    pop.style.left = `${x}px`;
+    pop.style.top = `${y}px`;
+
+    tapParticles.appendChild(pop);
+
+    setTimeout(() => {
+        pop.remove();
+    }, 450);
+}
+
+// معالجة النقر محلياً وفورياً
+function handleTap(clientX, clientY) {
     if (currentEnergy <= 0) {
-        showAlert("طاقتك خلصت! اشحن الطاقة فوراً بالزرار الأخضر بمشاهدة فيديو أو انتظر شوية.", "info");
+        showAlert("طاقتك خلصت! اشحن البطارية فوراً بالزرار الأخضر بمشاهدة فيديو أو انتظر ثواني وبتشحن لوحدها.", "info");
         return;
     }
 
-    // تحديث محلي سريع وتفاعلي
+    // استهلاك نقطة طاقة وإضافة عملات محلياً في التو واللحظة
     currentEnergy--;
     currentTokens += minerLevel;
-    currentBalance = Math.round((currentTokens / 100.0) * 100) / 100;
-    
+    currentBalance = Math.round((currentTokens / tokensPerEgp) * 100) / 100;
+    pendingTaps++;
+
     userTokensEl.innerText = currentTokens.toLocaleString();
     userBalanceEl.innerText = currentBalance.toFixed(2);
     updateEnergyDisplay();
 
+    // اهتزاز تليجرام الخفيف
     if (tg?.HapticFeedback) {
         tg.HapticFeedback.impactOccurred("light");
     }
 
-    // إرسال الضغطة للسيرفر
-    if (!isTapping) {
-        isTapping = true;
-        try {
-            const res = await fetch("/api/tap", {
-                method: "POST",
-                headers: {
-                    "X-Telegram-Init-Data": initData
-                }
-            });
-            const data = await res.json();
-            if (data.success && data.user) {
-                updateUIFromUser(data.user);
-            }
-        } catch (e) {
-            console.error("Tap error:", e);
-        } finally {
-            isTapping = false;
+    // إظهار الرقم العائم
+    spawnTapPop(clientX, clientY, minerLevel);
+
+    // جدولة إرسال الضغطات المجمعة للسيرفر
+    if (syncTimer) clearTimeout(syncTimer);
+    syncTimer = setTimeout(syncTapsWithServer, 400);
+}
+
+// مزامنة حزمة الضغطات مع السيرفر بدقة تامة
+async function syncTapsWithServer() {
+    if (pendingTaps <= 0 || isSyncing) return;
+
+    const countToSend = pendingTaps;
+    isSyncing = true;
+
+    try {
+        const res = await fetch("/api/tap", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Telegram-Init-Data": initData
+            },
+            body: JSON.stringify({ count: countToSend })
+        });
+        const data = await res.json();
+
+        if (data.success && data.user) {
+            // خصم ما تم تأكيده من طابور الانتظار
+            pendingTaps = Math.max(0, pendingTaps - countToSend);
+
+            // دمج حالة السيرفر مع أي ضغطات حصلت أثناء وقت استجابة الشبكة
+            currentTokens = data.user.tokens + (pendingTaps * minerLevel);
+            currentBalance = Math.round((currentTokens / tokensPerEgp) * 100) / 100;
+            currentEnergy = Math.max(0, data.user.energy - pendingTaps);
+
+            userTokensEl.innerText = currentTokens.toLocaleString();
+            userBalanceEl.innerText = currentBalance.toFixed(2);
+            updateEnergyDisplay();
         }
+    } catch (err) {
+        console.error("Tap sync error:", err);
+    } finally {
+        isSyncing = false;
+        if (pendingTaps > 0) {
+            if (syncTimer) clearTimeout(syncTimer);
+            syncTimer = setTimeout(syncTapsWithServer, 400);
+        }
+    }
+}
+
+// ربط أحداث اللمس والنقر مع منع السكرول نهائياً أثناء التعدين
+if (btnMineTap) {
+    btnMineTap.addEventListener("touchstart", (e) => {
+        e.preventDefault(); // يمنع السكرول والاهتزاز تماماً على الموبايل
+        const touch = e.touches[0];
+        handleTap(touch.clientX, touch.clientY);
+    }, { passive: false });
+
+    btnMineTap.addEventListener("mousedown", (e) => {
+        // للمتصفح على الكمبيوتر
+        handleTap(e.clientX, e.clientY);
+    });
+}
+
+// مزامنة فورية عند مغادرة الصفحة أو قفل التطبيق
+window.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden" && pendingTaps > 0) {
+        syncTapsWithServer();
     }
 });
 
-// ترقية جهاز التعدين بالعملات المجمعة
+// ترقية مستوى التعدين
 btnUpgradeMiner.addEventListener("click", async () => {
-    const cost = minerLevel * 100;
-    if (currentTokens < cost) {
-        showAlert(`محتاج ${cost} عملة عشان ترقي جهاز التعدين للمستوى التالي. واصل التعدين!`, "info");
+    const upgradeCost = minerLevel * 500;
+    if (currentTokens < upgradeCost) {
+        showAlert(`محتاج ${upgradeCost.toLocaleString()} عملة للترقية، رصيدك الحالي مش كفاية.`, "error");
         return;
     }
 
@@ -217,114 +298,93 @@ btnUpgradeMiner.addEventListener("click", async () => {
         const data = await res.json();
         if (data.success && data.user) {
             updateUIFromUser(data.user);
-            showAlert(data.message || "تمت ترقية جهاز التعدين بنجاح!", "success");
-            if (tg?.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred("success");
-            }
+            showAlert(`مبروك! تمت الترقية للمستوى ${data.user.miner_level} وضاعفت أرباحك!`, "success");
         } else {
             showAlert(data.message || "فشلت الترقية", "error");
         }
     } catch (e) {
-        showAlert("حصلت مشكلة في الترقية، اتأكد من النت عندك.", "error");
+        showAlert("حصل خطأ أثناء الترقية، جرب تاني.", "error");
     } finally {
         btnUpgradeMiner.disabled = false;
     }
 });
 
-// شحن الطاقة بالكامل بمشاهدة الفيديو (Adsgram Booster)
+// شحن الطاقة بمشاهدة الفيديو (Adsgram Booster)
 btnWatchAd.addEventListener("click", async () => {
     btnWatchAd.disabled = true;
-    btnWatchAd.querySelector(".btn-text").innerText = "بيجهز الفيديو...";
+    const originalText = btnWatchAd.innerHTML;
+    btnWatchAd.innerHTML = "<span class="btn-text">جاري تشغيل الفيديو...</span>";
 
-    // وضع تجريبي إذا لم يتفعل البلوك بعد
-    if (!adController || adsgramBlockId === "YOUR_ADSGRAM_BLOCK_ID") {
-        const simulate = confirm("تنبيه: هل تود محاكاة مشاهدة الفيديو لشحن الطاقة وإضافة العملات؟");
-        if (simulate) {
-            await creditRewardAndRefill();
-        } else {
+    if (adController) {
+        adController.show().then(() => {
+            claimReward(originalText);
+        }).catch((result) => {
+            console.warn("Ad skipped or failed:", result);
             btnWatchAd.disabled = false;
-            btnWatchAd.querySelector(".btn-text").innerText = "شحن الطاقة بالكامل فوراً (مشاهدة فيديو)";
-        }
-        return;
+            btnWatchAd.innerHTML = originalText;
+            showAlert("تم إلغاء الفيديو أو لم يكتمل، اتفرج للآخر لشحن الطاقة.", "error");
+        });
+    } else {
+        // محاكاة وضع التطوير المحلي
+        setTimeout(() => {
+            claimReward(originalText);
+        }, 1200);
     }
-
-    // تشغيل الفيديو عبر Adsgram
-    adController.show().then(async (result) => {
-        showAlert("عاش! شوفت الفيديو كامل، بنشحنلك الطاقة والعملات...", "info");
-        await creditRewardAndRefill();
-    }).catch((result) => {
-        let msg = "مشوفتش الفيديو للآخر، فالطاقة متجددتش.";
-        if (result && result.description) {
-            if (result.description.includes("no ads") || result.description.includes("empty")) {
-                msg = "مفيش فيديوهات متاحة حالياً، جرب تاني بعد دقيقة.";
-            }
-        }
-        showAlert(msg, "error");
-        btnWatchAd.disabled = false;
-        btnWatchAd.querySelector(".btn-text").innerText = "شحن الطاقة بالكامل فوراً (مشاهدة فيديو)";
-    });
 });
 
 // تأكيد مكافأة الإعلان وشحن الطاقة
-async function creditRewardAndRefill() {
+async function claimReward(originalBtnText) {
     try {
         const res = await fetch("/api/claim-ad", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
                 "X-Telegram-Init-Data": initData
             }
         });
         const data = await res.json();
-        
-        if (data.success && data.user) {
-            updateUIFromUser(data.user);
-            showAlert("مبروك! تم شحن الطاقة بالكامل ونزلت مكافأة الفيديو في رصيدك.", "success");
-            
-            if (tg?.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred("success");
+
+        if (data.success) {
+            showAlert("تم شحن طاقة البطارية بالكامل وإضافة عملات بونص بنجاح!", "success");
+            if (data.user) {
+                updateUIFromUser(data.user);
+            } else {
+                currentEnergy = maxEnergy;
+                updateEnergyDisplay();
             }
         } else {
-            showAlert(data.message || "حصلت مشكلة في الشحن", "error");
+            showAlert(data.message || "حصلت مشكلة في إضافة المكافأة", "error");
         }
     } catch (err) {
-        console.error("Reward error:", err);
-        showAlert("فشل الشحن، اتأكد من النت عندك.", "error");
+        console.error("Error claiming reward:", err);
+        showAlert("مش عارفين نسجل المكافأة، اتأكد من اتصال النت.", "error");
     } finally {
         btnWatchAd.disabled = false;
-        btnWatchAd.querySelector(".btn-text").innerText = "شحن الطاقة بالكامل فوراً (مشاهدة فيديو)";
+        btnWatchAd.innerHTML = originalBtnText;
     }
 }
 
-// نموذج السحب واستبدال العملات
+// تقديم طلب سحب
 withdrawForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    
-    const selectedProvider = document.querySelector('input[name="provider"]:checked').value;
+
+    const providerEl = document.querySelector('input[name="provider"]:checked');
+    const provider = providerEl ? providerEl.value : "vodafone_cash";
     const phone = withdrawPhone.value.trim();
     const amount = parseFloat(withdrawAmount.value);
 
-    if (!phone || phone.length !== 11) {
-        showAlert("لازم تكتب رقم موبايل صح مكون من 11 رقم", "error");
-        return;
-    }
-
-    if (isNaN(amount) || amount < minWithdrawal) {
-        showAlert(`أقل حد للسحب هو ${minWithdrawal} جنيه (${minWithdrawal * 100} عملة)`, "error");
+    if (amount < minWithdrawal) {
+        showAlert(`أقل حد للسحب هو ${minWithdrawal} جنيه.`, "error");
         return;
     }
 
     if (amount > currentBalance) {
-        showAlert(`رصيدك الحالي (${currentTokens} عملة = ${currentBalance.toFixed(2)} ج) ميكفيش تسحب المبلغ ده!`, "error");
+        showAlert(`رصيدك الحالي (${currentBalance.toFixed(2)} ج) ميكفيش للمبلغ المطلوب.`, "error");
         return;
     }
 
-    const confirmWithdraw = confirm(`تأكيد استبدال العملات:\n\nالمحفظة: ${selectedProvider}\nالرقم: ${phone}\nالمبلغ المطلوب: ${amount} جنيه (${amount * 100} عملة)\n\nالبيانات كده صح؟`);
-    if (!confirmWithdraw) return;
-
-    const btnSubmit = document.getElementById("btn-submit-withdraw");
-    btnSubmit.disabled = true;
-    btnSubmit.innerText = "بيبعت الطلب...";
+    const submitBtn = document.getElementById("btn-submit-withdraw");
+    submitBtn.disabled = true;
+    submitBtn.innerText = "جاري إرسال الطلب...";
 
     try {
         const res = await fetch("/api/withdraw", {
@@ -334,39 +394,34 @@ withdrawForm.addEventListener("submit", async (e) => {
                 "X-Telegram-Init-Data": initData
             },
             body: JSON.stringify({
-                provider: selectedProvider,
+                provider: provider,
                 phone_number: phone,
                 amount: amount
             })
         });
-
         const data = await res.json();
+
         if (data.success) {
-            showAlert("تم إرسال طلب استبدال العملات بنجاح، هيتم تحويل الكاش لمحفظتك قريباً.", "success");
-            currentBalance -= amount;
-            currentTokens = Math.round(currentBalance * 100);
-            userBalanceEl.innerText = currentBalance.toFixed(2);
-            userTokensEl.innerText = currentTokens.toLocaleString();
-            withdrawPhone.value = "";
+            showAlert("تم إرسال طلب السحب بنجاح وهيتم التحويل لمحفظتك قريباً.", "success");
             withdrawAmount.value = "";
-            setTimeout(() => {
-                showScreen(screenHome);
-            }, 1800);
+            showScreen(screenHome);
+            loadUserData();
         } else {
-            showAlert(data.message || "فشل إرسال الطلب", "error");
+            showAlert(data.message || "فشل إرسال طلب السحب.", "error");
         }
     } catch (err) {
         console.error("Withdraw error:", err);
-        showAlert("حصلت مشكلة في الاتصال بالسيرفر.", "error");
+        showAlert("حصلت مشكلة أثناء الاتصال بالسيرفر، جرب تاني.", "error");
     } finally {
-        btnSubmit.disabled = false;
-        btnSubmit.innerText = "تأكيد طلب السحب";
+        submitBtn.disabled = false;
+        submitBtn.innerText = "تأكيد طلب السحب";
     }
 });
 
-// تحميل سجل العمليات
+// تحميل سجل السحوبات
 async function loadWithdrawalHistory() {
-    historyList.innerHTML = '<p class="empty-msg">بيحمل السجل...</p>';
+    historyList.innerHTML = "<p class="empty-msg">بيحمل السجل...</p>";
+
     try {
         const res = await fetch("/api/withdrawals", {
             headers: {
@@ -376,44 +431,53 @@ async function loadWithdrawalHistory() {
         const data = await res.json();
 
         if (data.success && data.withdrawals && data.withdrawals.length > 0) {
-            historyList.innerHTML = data.withdrawals.map(w => {
-                let badgeClass = "badge-pending";
-                let statusText = "قيد المراجعة";
-                if (w.status === "approved") {
-                    badgeClass = "badge-approved";
-                    statusText = "تم التحويل بنجاح";
-                } else if (w.status === "rejected") {
-                    badgeClass = "badge-rejected";
-                    statusText = "مرفوض والعملات رجعت لرصيدك";
+            historyList.innerHTML = "";
+            data.withdrawals.forEach(item => {
+                const dateStr = new Date(item.created_at * 1000).toLocaleDateString("ar-EG", {
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                });
+
+                let statusBadge = "";
+                if (item.status === "pending") {
+                    statusBadge = "<span class="history-status status-pending">مستني الموافقة</span>";
+                } else if (item.status === "approved") {
+                    statusBadge = "<span class="history-status status-approved">تم التحويل</span>";
+                } else {
+                    statusBadge = "<span class="history-status status-rejected">مرفوض ومسترد</span>";
                 }
 
-                let provName = "فودافون كاش";
-                if (w.provider === "orange_cash") provName = "أورنج كاش";
-                if (w.provider === "etisalat_cash") provName = "اتصالات كاش";
-                if (w.provider === "we_cash") provName = "وي كاش";
+                const providerName = {
+                    "vodafone_cash": "فودافون كاش",
+                    "orange_cash": "أورنج كاش",
+                    "etisalat_cash": "اتصالات كاش",
+                    "we_cash": "وي كاش"
+                }[item.provider] || item.provider;
 
-                const dateStr = new Date(w.created_at * 1000).toLocaleDateString('ar-EG');
-
-                return `
-                    <div class="history-item">
-                        <div class="history-header">
-                            <span>${w.amount.toFixed(2)} جنيه (${provName})</span>
-                            <span class="badge ${badgeClass}">${statusText}</span>
-                        </div>
-                        <div class="history-details">
-                            <div>الرقم: <b>${w.phone_number}</b></div>
-                            <div>التاريخ: ${dateStr}</div>
-                        </div>
+                const div = document.createElement("div");
+                div.className = "history-item";
+                div.innerHTML = `
+                    <div class="history-top">
+                        <span class="history-amount">${item.amount.toFixed(2)} جنيه</span>
+                        ${statusBadge}
+                    </div>
+                    <div class="history-bottom">
+                        <span>${providerName} (${item.phone_number})</span>
+                        <span>${dateStr}</span>
                     </div>
                 `;
-            }).join("");
+                historyList.appendChild(div);
+            });
         } else {
-            historyList.innerHTML = '<p class="empty-msg">مفيش أي عمليات سابقة لحد دلوقتي.</p>';
+            historyList.innerHTML = "<p class="empty-msg">لسه مفيش أي طلبات سحب سابقة.</p>";
         }
     } catch (err) {
-        historyList.innerHTML = '<p class="empty-msg">فشل تحميل السجل.</p>';
+        console.error("Error loading history:", err);
+        historyList.innerHTML = "<p class="empty-msg">حصلت مشكلة في تحميل السجل.</p>";
     }
 }
 
-// بدء التحميل
+// بدء التشغيل
 loadUserData();

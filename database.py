@@ -1,3 +1,4 @@
+import config
 import sqlite3
 import time
 from pathlib import Path
@@ -121,8 +122,8 @@ def get_user(telegram_id: int) -> Optional[Dict[str, Any]]:
         user_dict["energy"] = calculate_energy(user_dict)
         return user_dict
 
-def process_mining_tap(telegram_id: int) -> Tuple[bool, str, Dict[str, Any]]:
-    """الضغط للتعدين في اللعبة: استهلاك الطاقة وإضافة عملات WEKI"""
+def process_mining_tap(telegram_id: int, count: int = 1) -> Tuple[bool, str, Dict[str, Any]]:
+    """الضغط للتعدين في اللعبة: استهلاك الطاقة وإضافة عملات WEKI (يدعم تجميع الضغطات)"""
     with get_db() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE telegram_id = ?", (telegram_id,))
@@ -138,13 +139,17 @@ def process_mining_tap(telegram_id: int) -> Tuple[bool, str, Dict[str, Any]]:
         if energy <= 0:
             return False, "طاقتك خلصت! اشحن الطاقة مجاناً بمشاهدة فيديو أو انتظر شوية.", user
 
-        coins_per_tap = miner_level
-        new_energy = max(0, energy - 1)
-        new_tokens = tokens + coins_per_tap
+        # تحديد عدد الضغطات المسموح بتنفيذها حسب الطاقة المتاحة
+        valid_count = max(1, min(int(count), 50))
+        taps_to_process = min(energy, valid_count)
+
+        coins_gained = taps_to_process * miner_level
+        new_energy = max(0, energy - taps_to_process)
+        new_tokens = tokens + coins_gained
         now = int(time.time())
 
         # تحديث رصيد الكاش تلقائياً (100 عملة = 1 جنيه)
-        new_balance = round(new_tokens / 100.0, 2)
+        new_balance = round(new_tokens / float(config.TOKENS_PER_EGP), 2)
 
         cursor.execute("""
         UPDATE users 
@@ -177,7 +182,7 @@ def upgrade_miner_level(telegram_id: int) -> Tuple[bool, str, Dict[str, Any]]:
 
         new_level = level + 1
         new_tokens = tokens - upgrade_cost
-        new_balance = round(new_tokens / 100.0, 2)
+        new_balance = round(new_tokens / float(config.TOKENS_PER_EGP), 2)
         new_max_energy = 100 + (new_level - 1) * 20
 
         cursor.execute("""
@@ -212,9 +217,9 @@ def claim_ad_reward(telegram_id: int, reward: float, cooldown_seconds: int = 15)
             wait_left = cooldown_seconds - elapsed
             return False, f"يرجى الانتظار {wait_left} ثانية قبل مشاهدة الفيديو التالي", user["balance"]
             
-        bonus_tokens = 5 # 5 عملات إضافية
+        bonus_tokens = 50 # 5 عملات إضافية
         new_tokens = user.get("tokens", 0) + bonus_tokens
-        new_balance = round(new_tokens / 100.0, 2)
+        new_balance = round(new_tokens / float(config.TOKENS_PER_EGP), 2)
         new_total_earned = round(user["total_earned"] + reward, 2)
         new_ads_count = user["total_ads_watched"] + 1
         max_energy = user.get("max_energy", 100)
@@ -258,7 +263,7 @@ def create_withdrawal(telegram_id: int, provider: str, phone_number: str, amount
             return False, "عندك طلب سحب سابق لسه بيتراجع، استنى لما يخلص.", None
             
         new_balance = round(current_balance - amount, 2)
-        new_tokens = int(new_balance * 100)
+        new_tokens = int(new_balance * config.TOKENS_PER_EGP)
         now = int(time.time())
         
         cursor.execute("UPDATE users SET balance = ?, tokens = ? WHERE telegram_id = ?", (new_balance, new_tokens, telegram_id))

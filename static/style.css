@@ -3,7 +3,7 @@
    - متوافق 100% مع شروط شبكات الإعلانات (Adsgram / Monetag)
    - زوايا حادة ومسطحة تماماً (Zero Border-Radius)
    - بدون أي أنيميشن أو بطء (Zero Animations)
-   - خطوط عصرية أنيقة خالية من أي إيموجي أو بهرجة
+   - خطوط عصرية أنيقة خالية من أي إيموجي
    ========================================================================== */
 
 * {
@@ -17,33 +17,49 @@
     font-family: 'Cairo', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-body {
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+    -webkit-overscroll-behavior: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-y;
     background-color: #f4f4f5;
     color: #09090b;
     font-size: 15px;
     line-height: 1.5;
-    padding: 12px;
     direction: rtl;
 }
 
 .container {
+    height: 100%;
+    max-height: 100%;
     max-width: 440px;
     margin: 0 auto;
     background-color: #ffffff;
-    border: 1px solid #e4e4e7;
-    padding: 20px;
+    border-left: 1px solid #e4e4e7;
+    border-right: 1px solid #e4e4e7;
+    padding: 16px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
 }
 
 /* الترويسة العلوية */
 .app-header {
     text-align: center;
-    padding-bottom: 14px;
-    margin-bottom: 18px;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
     border-bottom: 1px solid #f4f4f5;
+    flex-shrink: 0;
 }
 
 .main-title {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 900;
     letter-spacing: -0.5px;
     color: #09090b;
@@ -51,7 +67,7 @@ body {
 }
 
 .user-greeting {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: #71717a;
     margin-top: 2px;
@@ -59,11 +75,12 @@ body {
 
 /* شريط التنبيهات */
 .alert-box {
-    padding: 12px 14px;
-    margin-bottom: 16px;
-    font-size: 14px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    font-size: 13px;
     font-weight: 600;
     border: 1px solid transparent;
+    flex-shrink: 0;
 }
 
 .alert-box.success {
@@ -96,42 +113,40 @@ body {
     background-color: #09090b;
     color: #ffffff;
     border: 1px solid #18181b;
-    padding: 22px 18px;
-    margin-bottom: 14px;
+    padding: 16px 14px;
+    margin-bottom: 10px;
     text-align: center;
+    flex-shrink: 0;
 }
 
 .card-label {
     display: block;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     color: #a1a1aa;
-    letter-spacing: 0.5px;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .balance-amount {
-    font-size: 40px;
+    font-size: 36px;
     font-weight: 900;
     line-height: 1.1;
     color: #ffffff;
-    letter-spacing: -1px;
+    letter-spacing: -0.5px;
 }
 
 .balance-amount small {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     color: #10b981;
     margin-right: 4px;
 }
 
 .cash-value {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: #a1a1aa;
-    margin-top: 8px;
-    border-top: 1px solid #27272a;
-    padding-top: 8px;
+    margin-top: 6px;
 }
 
 .cash-value span {
@@ -139,17 +154,27 @@ body {
     font-weight: 800;
 }
 
+.balance-note {
+    font-size: 11px;
+    font-weight: 600;
+    color: #71717a;
+    margin-top: 6px;
+    border-top: 1px solid #27272a;
+    padding-top: 6px;
+}
+
 /* شريط الإحصائيات */
 .stat-card {
     display: flex;
     background-color: #fafafa;
     border: 1px solid #e4e4e7;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
+    flex-shrink: 0;
 }
 
 .stat-item {
     flex: 1;
-    padding: 10px 14px;
+    padding: 8px 10px;
     text-align: center;
 }
 
@@ -159,25 +184,29 @@ body {
 
 .stat-title {
     display: block;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     color: #71717a;
     margin-bottom: 2px;
 }
 
 .stat-val {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 800;
     color: #09090b;
 }
 
-/* شريط الطاقة */
+/* قسم شريط الطاقة */
+.energy-section {
+    margin-bottom: 12px;
+    flex-shrink: 0;
+}
+
 .energy-bar-container {
     width: 100%;
     height: 8px;
     background-color: #e4e4e7;
     border: 1px solid #d4d4d8;
-    margin-bottom: 16px;
     overflow: hidden;
 }
 
@@ -186,39 +215,100 @@ body {
     background-color: #059669;
 }
 
-/* الزر المركزي للتعدين (Tap Box) */
-.mining-box {
-    display: block;
-    width: 100%;
-    background-color: #09090b;
-    border: 2px solid #18181b;
-    color: #ffffff;
-    padding: 36px 12px;
-    cursor: pointer;
+.energy-note {
+    font-size: 11px;
+    font-weight: 600;
+    color: #71717a;
+    margin-top: 4px;
     text-align: center;
-    margin-bottom: 14px;
+}
+
+/* ================= منطقة التعدين المبتكرة ================= */
+.mining-stage {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 28px 0;
+    margin: 8px 0 16px;
+    touch-action: manipulation;
+    flex-shrink: 0;
+}
+
+.mining-gem {
+    width: 160px;
+    height: 160px;
+    background-color: #09090b;
+    border: 2px solid #10b981;
+    box-shadow: 0 0 0 4px #18181b, 0 8px 24px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
     user-select: none;
-    outline: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    transform: rotate(45deg);
+    position: relative;
 }
 
-.mining-box:active {
+.mining-gem:active {
+    transform: rotate(45deg) scale(0.96);
     background-color: #18181b;
-    transform: scale(0.99);
+    border-color: #34d399;
 }
 
-.mine-title {
-    display: block;
-    font-size: 26px;
+.gem-content {
+    transform: rotate(-45deg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    width: 100%;
+}
+
+.gem-icon {
+    width: 42px;
+    height: 42px;
+    margin-bottom: 4px;
+}
+
+.gem-title {
+    font-size: 16px;
     font-weight: 900;
-    letter-spacing: -0.5px;
+    color: #ffffff;
+    letter-spacing: -0.3px;
 }
 
-.mine-sub {
-    display: block;
-    font-size: 14px;
+.gem-sub {
+    font-size: 11px;
     font-weight: 700;
     color: #10b981;
-    margin-top: 4px;
+    margin-top: 2px;
+}
+
+/* أرقام النقر العائمة */
+.tap-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 50;
+}
+
+.tap-pop {
+    position: absolute;
+    font-size: 20px;
+    font-weight: 900;
+    color: #10b981;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    pointer-events: none;
+    user-select: none;
+    transform: translate(-50%, -50%);
 }
 
 /* قسم المعززات */
@@ -226,14 +316,15 @@ body {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
+    flex-shrink: 0;
 }
 
 .btn {
     display: block;
     width: 100%;
-    padding: 14px 16px;
-    font-size: 15px;
+    padding: 12px 14px;
+    font-size: 14px;
     font-weight: 700;
     text-align: center;
     cursor: pointer;
@@ -258,217 +349,215 @@ body {
 }
 
 .btn-boost:disabled {
-    background-color: #d4d4d8;
-    color: #71717a;
-    border-color: #d4d4d8;
+    background-color: #a1a1aa;
+    border-color: #71717a;
     cursor: not-allowed;
-    opacity: 1;
+    opacity: 0.7;
 }
 
-/* زر ترقية جهاز التعدين */
+/* زر ترقية التعدين */
 .btn-upgrade {
-    background-color: #ffffff;
-    color: #09090b;
-    border: 1px solid #09090b;
+    background-color: #18181b;
+    color: #ffffff;
+    border: 1px solid #27272a;
 }
 
 .btn-upgrade:hover {
-    background-color: #fafafa;
+    background-color: #27272a;
+}
+
+.btn-upgrade:disabled {
+    background-color: #e4e4e7;
+    color: #a1a1aa;
+    border-color: #d4d4d8;
+    cursor: not-allowed;
 }
 
 .divider {
     border: 0;
-    border-top: 1px solid #f4f4f5;
-    margin: 16px 0;
+    height: 1px;
+    background-color: #e4e4e7;
+    margin: 12px 0;
+    flex-shrink: 0;
 }
 
-/* زر التوجه للمحفظة */
+/* زر السحب */
 .btn-withdraw-nav {
     background-color: #09090b;
     color: #ffffff;
-    border-color: #09090b;
-    margin-bottom: 10px;
+    border-color: #18181b;
+    margin-bottom: 8px;
+    flex-shrink: 0;
 }
 
 .btn-withdraw-nav:hover {
     background-color: #18181b;
 }
 
-/* زر ثانوي / رجوع */
+/* زر ثانوي */
 .btn-secondary {
-    background-color: #ffffff;
-    color: #09090b;
-    border: 1px solid #e4e4e7;
-    margin-bottom: 10px;
+    background-color: #f4f4f5;
+    color: #27272a;
+    border: 1px solid #d4d4d8;
+    margin-bottom: 8px;
+    flex-shrink: 0;
 }
 
 .btn-secondary:hover {
-    background-color: #fafafa;
+    background-color: #e4e4e7;
 }
 
-/* زر تأكيد استبدال النقاط */
-.btn-submit {
-    background-color: #059669;
-    color: #ffffff;
-    border-color: #047857;
-    margin-top: 14px;
-}
-
-/* شاشة السحب */
+/* ================= شاشة السحب والمحفظة ================= */
 .section-title {
     font-size: 18px;
-    font-weight: 800;
+    font-weight: 900;
     color: #09090b;
     margin-bottom: 12px;
     text-align: center;
 }
 
 .withdraw-rules {
-    background-color: #fff1f2;
-    border: 1px solid #ffe4e6;
-    border-right: 3px solid #e11d48;
-    color: #9f1239;
-    padding: 10px 14px;
+    background-color: #f4f4f5;
+    border-right: 4px solid #09090b;
+    padding: 12px;
     font-size: 13px;
     font-weight: 600;
+    color: #3f3f46;
     margin-bottom: 16px;
-    text-align: center;
 }
 
 .input-label {
     display: block;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
-    color: #27272a;
-    margin-top: 14px;
-    margin-bottom: 6px;
-}
-
-.text-input {
-    width: 100%;
-    padding: 13px 14px;
-    font-size: 16px;
-    font-weight: 600;
-    border: 1px solid #d4d4d8;
-    background-color: #ffffff;
     color: #09090b;
     margin-bottom: 6px;
 }
 
-.text-input:focus {
-    outline: none;
-    border-color: #09090b;
-}
-
-.text-input::placeholder {
-    color: #a1a1aa;
-    font-weight: normal;
-}
-
-/* شبكة اختيار المحفظة */
 .wallets-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
-.wallet-option {
-    cursor: pointer;
-    display: block;
-}
-
-.wallet-option input[type="radio"] {
+.wallet-option input {
     display: none;
 }
 
 .wallet-box {
     display: block;
-    padding: 12px 8px;
+    padding: 12px 6px;
     text-align: center;
     font-weight: 700;
-    font-size: 14px;
-    border: 1px solid #e4e4e7;
-    background-color: #ffffff;
-    color: #3f3f46;
-}
-
-.wallet-option input[type="radio"]:checked + .wallet-box {
-    color: #ffffff;
-    border: 1px solid transparent;
-}
-
-.wallet-option input[type="radio"]:checked + .wallet-box.vf {
-    background-color: #dc2626;
-}
-
-.wallet-option input[type="radio"]:checked + .wallet-box.og {
-    background-color: #ea580c;
-}
-
-.wallet-option input[type="radio"]:checked + .wallet-box.et {
-    background-color: #16a34a;
-}
-
-.wallet-option input[type="radio"]:checked + .wallet-box.we {
-    background-color: #7c3aed;
-}
-
-/* سجل العمليات */
-.history-list {
-    margin-bottom: 18px;
-}
-
-.history-item {
-    border: 1px solid #e4e4e7;
-    padding: 14px;
-    margin-bottom: 8px;
-    background-color: #ffffff;
-}
-
-.history-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 700;
-    font-size: 15px;
-    color: #09090b;
-    padding-bottom: 8px;
-    margin-bottom: 8px;
-    border-bottom: 1px solid #f4f4f5;
-}
-
-.history-details {
     font-size: 13px;
-    color: #71717a;
-    display: flex;
-    justify-content: space-between;
+    border: 2px solid #e4e4e7;
+    cursor: pointer;
+    background-color: #fafafa;
+    color: #27272a;
 }
 
-.badge {
-    padding: 3px 8px;
-    font-size: 12px;
-    font-weight: 700;
+.wallet-option input:checked + .wallet-box {
+    border-color: #09090b;
+    background-color: #09090b;
+    color: #ffffff;
 }
 
-.badge-pending {
-    background-color: #fef3c7;
-    color: #92400e;
+.wallet-box.vf { border-top: 3px solid #e60000; }
+.wallet-box.og { border-top: 3px solid #ff7900; }
+.wallet-box.et { border-top: 3px solid #7cb305; }
+.wallet-box.we { border-top: 3px solid #5f259f; }
+
+.text-input {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid #d4d4d8;
+    background-color: #fafafa;
+    margin-bottom: 14px;
+    outline: none;
+    direction: ltr;
+    text-align: right;
 }
 
-.badge-approved {
-    background-color: #ecfdf5;
-    color: #065f46;
+.text-input:focus {
+    border-color: #09090b;
+    background-color: #ffffff;
 }
 
-.badge-rejected {
-    background-color: #fef2f2;
-    color: #991b1b;
+.btn-submit {
+    background-color: #059669;
+    color: #ffffff;
+    border-color: #047857;
+    margin-top: 6px;
+    margin-bottom: 12px;
+}
+
+.btn-submit:hover {
+    background-color: #047857;
+}
+
+/* ================= شاشة سجل السحوبات ================= */
+.history-list {
+    margin-bottom: 16px;
 }
 
 .empty-msg {
     text-align: center;
-    color: #a1a1aa;
-    padding: 30px 0;
+    color: #71717a;
     font-size: 14px;
+    padding: 24px 0;
+}
+
+.history-item {
+    border: 1px solid #e4e4e7;
+    background-color: #fafafa;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+}
+
+.history-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.history-amount {
+    font-size: 15px;
+    font-weight: 800;
+    color: #09090b;
+}
+
+.history-status {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 6px;
+}
+
+.status-pending {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
+.status-approved {
+    background-color: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.status-rejected {
+    background-color: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.history-bottom {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #71717a;
+    font-weight: 600;
 }

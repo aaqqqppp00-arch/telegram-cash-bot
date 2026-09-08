@@ -27,6 +27,9 @@ REWARD_PER_AD = float(os.getenv("REWARD_PER_AD", "0.05"))
 # الحد الأدنى للسحب بالجنيه المصري
 MIN_WITHDRAWAL = float(os.getenv("MIN_WITHDRAWAL", "20.0"))
 
+# معدل تحويل عملات اللعبة للجنيه (مثال: 5000 عملة = 1 جنيه مصري)
+TOKENS_PER_EGP = int(os.getenv("TOKENS_PER_EGP", "5000"))
+
 # وقت الانتظار الأدنى بين الإعلانات بالثواني (لمنع التلاعب)
 AD_COOLDOWN_SECONDS = int(os.getenv("AD_COOLDOWN_SECONDS", "15"))
 
