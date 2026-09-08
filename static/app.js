@@ -115,13 +115,7 @@ function updateUIFromUser(user) {
     updateEnergyDisplay();
 }
 
-// استرجاع طاقة تدريجي محلياً كل 3 ثواني
-setInterval(() => {
-    if (currentEnergy < maxEnergy) {
-        currentEnergy = Math.min(maxEnergy, currentEnergy + 1);
-        updateEnergyDisplay();
-    }
-}, 3000);
+// لا يوجد شحن تلقائي - الشحن بمشاهدة الفيديو فقط لضمان أرباح الإعلانات
 
 // جلب بيانات المستخدم من السيرفر
 async function loadUserData() {
@@ -200,7 +194,7 @@ function spawnTapPop(clientX, clientY, amount) {
 // معالجة النقر محلياً وفورياً
 function handleTap(clientX, clientY) {
     if (currentEnergy <= 0) {
-        showAlert("طاقتك خلصت! اشحن البطارية فوراً بالزرار الأخضر بمشاهدة فيديو أو انتظر ثواني وبتشحن لوحدها.", "info");
+        showAlert("طاقتك خلصت! اضغط على الزرار الأخضر واتفرج على فيديو لشحن الطاقة وكمل تعدين.", "info");
         return;
     }
 

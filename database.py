@@ -75,20 +75,8 @@ def init_db():
         conn.commit()
 
 def calculate_energy(user: Dict[str, Any]) -> int:
-    """إعادة شحن الطاقة تدريجياً مع مرور الوقت (نقطة كل 3 ثواني)"""
-    now = int(time.time())
-    last_time = user.get("last_energy_timestamp")
-    current_energy = user.get("energy", 100)
-    max_energy = user.get("max_energy", 100)
-    
-    # إذا كان المستخدم جديد أو لم يُسجل وقت، تكون طاقته كاملة
-    if not last_time:
-        return max_energy
-
-    elapsed = max(0, now - last_time)
-    recovered = elapsed // 3 # استرجاع نقطة طاقة كل 3 ثواني
-    new_energy = min(max_energy, current_energy + recovered)
-    return new_energy
+    """الطاقة الحالية للمستخدم (لا تُشحن تلقائياً، تُشحن حصراً بمشاهدة الإعلانات)"""
+    return user.get("energy", 100)
 
 def get_or_create_user(telegram_id: int, first_name: str = "", username: str = "") -> Dict[str, Any]:
     with get_db() as conn:
@@ -141,7 +129,7 @@ def process_mining_tap(telegram_id: int, count: int = 1) -> Tuple[bool, str, Dic
         tokens = user.get("tokens", 0)
 
         if energy <= 0:
-            return False, "طاقتك خلصت! اشحن الطاقة مجاناً بمشاهدة فيديو أو انتظر شوية.", user
+            return False, "طاقتك خلصت! اشحن الطاقة بمشاهدة فيديو عشان تقدر تكمل تعدين.", user
 
         # تحديد عدد الضغطات المسموح بتنفيذها حسب الطاقة المتاحة
         valid_count = max(1, min(int(count), 50))
