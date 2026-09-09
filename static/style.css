@@ -1,11 +1,52 @@
 /* ==========================================================================
    تصميم لعبة WEKI Miner (Modern Geometric Web3 Clicker)
-   - متوافق 100% مع معايير شبكات الإعلانات (Adsgram / Monetag)
+   - وضعين متكاملين: وضع ليلي (Night) ووضع نهاري (Day) عبر متغيرات CSS
+   - قاعدة 44 بكسل (44px Minimum Touch Target Rule) على جميع الأزرار والتبويبات
+   - شريط تنقل سفلي مرتفع عن القاع (Lifted Bottom Dock) مع هامش وبادينج كافٍ
    - زوايا حادة ومسطحة تماماً بدون أي انحناء (Zero Border-Radius Strictly)
    - بدون أي أنيميشن أو بطء (Zero Animations)
-   - شريط تنقل سفلي ثابت (Fixed Bottom Dock) لمنع تراكم وتكديس الأزرار
    - خالي تماماً من أي إيموجي
    ========================================================================== */
+
+:root, body.theme-dark {
+    --bg-page: #09090b;
+    --bg-card: #121215;
+    --bg-subtle: #18181b;
+    --border-color: #27272a;
+    --border-highlight: #3f3f46;
+    --text-primary: #ffffff;
+    --text-secondary: #a1a1aa;
+    --text-muted: #71717a;
+    --accent-emerald: #10b981;
+    --accent-emerald-dark: #059669;
+    --nav-bg: #09090b;
+    --nav-border: #27272a;
+    --nav-active-bg: #18181b;
+    --nav-active-color: #10b981;
+    --gem-bg: #121215;
+    --gem-shadow: rgba(0, 0, 0, 0.6);
+    --input-bg: #121215;
+}
+
+body.theme-light {
+    --bg-page: #f4f4f5;
+    --bg-card: #ffffff;
+    --bg-subtle: #f4f4f5;
+    --border-color: #e4e4e7;
+    --border-highlight: #d4d4d8;
+    --text-primary: #09090b;
+    --text-secondary: #52525b;
+    --text-muted: #71717a;
+    --accent-emerald: #059669;
+    --accent-emerald-dark: #047857;
+    --nav-bg: #ffffff;
+    --nav-border: #d4d4d8;
+    --nav-active-bg: #f4f4f5;
+    --nav-active-color: #059669;
+    --gem-bg: #09090b;
+    --gem-shadow: rgba(0, 0, 0, 0.15);
+    --input-bg: #ffffff;
+}
 
 * {
     box-sizing: border-box;
@@ -27,8 +68,8 @@ html, body {
     user-select: none;
     -webkit-user-select: none;
     touch-action: pan-y;
-    background-color: #09090b;
-    color: #f4f4f5;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
     font-size: 14px;
     line-height: 1.5;
     direction: rtl;
@@ -39,10 +80,10 @@ html, body {
     max-height: 100%;
     max-width: 440px;
     margin: 0 auto;
-    background-color: #09090b;
-    border-left: 1px solid #27272a;
-    border-right: 1px solid #27272a;
-    padding: 10px 14px 68px 14px;
+    background-color: var(--bg-page);
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    padding: 10px 14px 84px 14px; /* بادينج سفلي 84px لرفع المحتوى فوق البوتم بار المرتفع */
     overflow-y: auto;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
@@ -50,28 +91,64 @@ html, body {
     flex-direction: column;
 }
 
-/* ================= الترويسة العلوية المدمجة ================= */
+/* ================= الترويسة مع زر تبديل الوضع (قاعدة 44px) ================= */
 .app-header {
-    text-align: center;
     padding-bottom: 6px;
     margin-bottom: 8px;
-    border-bottom: 1px solid #18181b;
+    border-bottom: 1px solid var(--border-color);
     flex-shrink: 0;
+}
+
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-brand-box {
+    text-align: right;
 }
 
 .header-brand {
     font-size: 18px;
     font-weight: 900;
     letter-spacing: 1.5px;
-    color: #ffffff;
+    color: var(--text-primary);
     text-transform: uppercase;
 }
 
 .user-greeting {
     font-size: 12px;
     font-weight: 600;
-    color: #71717a;
+    color: var(--text-muted);
     margin-top: 1px;
+}
+
+/* زر وضع النهار والليل (قاعدة 44 بكسل على الأقل) */
+.btn-theme-toggle {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    outline: none;
+    flex-shrink: 0;
+}
+
+.btn-theme-toggle:active {
+    background-color: var(--bg-subtle);
+}
+
+.theme-icon {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
 }
 
 /* شريط التنبيهات */
@@ -113,13 +190,13 @@ html, body {
     width: 100%;
 }
 
-/* بطاقة الحالة والرصيد المدمجة العصرية */
+/* بطاقة الحالة والرصيد المدمجة */
 .stat-grid-card {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #121215;
-    border: 1px solid #27272a;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
     padding: 10px 12px;
     margin-bottom: 8px;
     flex-shrink: 0;
@@ -134,14 +211,14 @@ html, body {
     display: block;
     font-size: 11px;
     font-weight: 600;
-    color: #71717a;
+    color: var(--text-muted);
     margin-bottom: 2px;
 }
 
 .tokens-val {
     font-size: 20px;
     font-weight: 900;
-    color: #ffffff;
+    color: var(--text-primary);
     line-height: 1.1;
     letter-spacing: -0.5px;
 }
@@ -149,45 +226,45 @@ html, body {
 .tokens-val small {
     font-size: 11px;
     font-weight: 700;
-    color: #10b981;
+    color: var(--accent-emerald);
 }
 
 .cash-val {
     font-size: 11px;
     font-weight: 600;
-    color: #a1a1aa;
+    color: var(--text-secondary);
     margin-top: 2px;
 }
 
 .cash-val span {
-    color: #10b981;
+    color: var(--accent-emerald);
     font-weight: 700;
 }
 
 .stat-col-divider {
     width: 1px;
     height: 38px;
-    background-color: #27272a;
+    background-color: var(--border-color);
     margin: 0 8px;
 }
 
 .level-val {
     font-size: 16px;
     font-weight: 800;
-    color: #ffffff;
+    color: var(--text-primary);
 }
 
 .rate-val {
     font-size: 11px;
     font-weight: 700;
-    color: #10b981;
+    color: var(--accent-emerald);
     margin-top: 2px;
 }
 
 /* قسم شريط الطاقة */
 .energy-panel {
-    background-color: #121215;
-    border: 1px solid #27272a;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
     padding: 8px 10px;
     margin-bottom: 8px;
     flex-shrink: 0;
@@ -203,14 +280,14 @@ html, body {
 .energy-label {
     font-size: 11px;
     font-weight: 700;
-    color: #a1a1aa;
+    color: var(--text-secondary);
 }
 
 /* حل مشكلة قلب الأرقام في العربية */
 .energy-count {
     font-size: 12px;
     font-weight: 800;
-    color: #ffffff;
+    color: var(--text-primary);
     direction: ltr !important;
     unicode-bidi: isolate !important;
     display: inline-block;
@@ -220,14 +297,14 @@ html, body {
 .energy-bar-container {
     width: 100%;
     height: 6px;
-    background-color: #27272a;
-    border: 1px solid #3f3f46;
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-color);
     overflow: hidden;
 }
 
 .energy-bar-fill {
     height: 100%;
-    background-color: #10b981;
+    background-color: var(--accent-emerald);
 }
 
 .energy-sub-info {
@@ -241,11 +318,11 @@ html, body {
 }
 
 .sub-label {
-    color: #71717a;
+    color: var(--text-muted);
 }
 
 .sub-timer {
-    color: #10b981;
+    color: var(--accent-emerald);
     font-weight: 700;
     font-family: monospace, sans-serif;
 }
@@ -271,9 +348,9 @@ button.mining-gem, .mining-gem {
     touch-action: manipulation;
     width: 135px;
     height: 135px;
-    background-color: #121215;
-    border: 2px solid #10b981;
-    box-shadow: 0 0 0 4px #18181b, 0 8px 24px rgba(0,0,0,0.5);
+    background-color: var(--gem-bg);
+    border: 2px solid var(--accent-emerald);
+    box-shadow: 0 0 0 4px var(--border-color), 0 8px 24px var(--gem-shadow);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -287,8 +364,7 @@ button.mining-gem, .mining-gem {
 
 .mining-gem:active {
     transform: rotate(45deg) scale(0.96);
-    background-color: #18181b;
-    border-color: #34d399;
+    background-color: var(--bg-subtle);
 }
 
 .gem-content {
@@ -330,14 +406,14 @@ button.mining-gem, .mining-gem {
     position: absolute;
     font-size: 20px;
     font-weight: 900;
-    color: #10b981;
+    color: var(--accent-emerald);
     text-shadow: 0 1px 3px rgba(0,0,0,0.9);
     pointer-events: none;
     user-select: none;
     transform: translate(-50%, -50%);
 }
 
-/* ================= شبكة الإجراءات السريعة (زرين جنب بعض فقط) ================= */
+/* ================= شبكة الإجراءات السريعة (قاعدة 44px) ================= */
 .quick-actions-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -348,9 +424,12 @@ button.mining-gem, .mining-gem {
 }
 
 .btn {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    padding: 12px 6px;
+    min-height: 44px; /* قاعدة 44 بكسل */
+    padding: 10px 6px;
     font-size: 13px;
     font-weight: 800;
     text-align: center;
@@ -365,83 +444,85 @@ button.mining-gem, .mining-gem {
 }
 
 .btn-boost {
-    background-color: #059669;
+    background-color: var(--accent-emerald-dark);
     color: #ffffff;
-    border-color: #10b981;
+    border-color: var(--accent-emerald);
 }
 
 .btn-boost:hover {
-    background-color: #047857;
+    background-color: var(--accent-emerald);
 }
 
 .btn-boost:disabled {
-    background-color: #27272a;
-    border-color: #3f3f46;
-    color: #71717a;
+    background-color: var(--border-color);
+    border-color: var(--border-highlight);
+    color: var(--text-muted);
     cursor: not-allowed;
     opacity: 0.7;
 }
 
 .btn-upgrade {
-    background-color: #18181b;
-    color: #ffffff;
-    border: 1px solid #3f3f46;
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border-highlight);
 }
 
 .btn-upgrade:hover {
-    background-color: #27272a;
+    background-color: var(--bg-subtle);
 }
 
 .btn-upgrade:disabled {
-    background-color: #121215;
-    color: #52525b;
-    border-color: #27272a;
+    background-color: var(--bg-card);
+    color: var(--text-muted);
+    border-color: var(--border-color);
     cursor: not-allowed;
 }
 
-/* ================= شريط التنقل السفلي الثابت (Bottom Nav Dock) ================= */
+/* ================= شريط التنقل السفلي المرتفع (Lifted Dock + قاعدة 44px) ================= */
 .bottom-nav {
     position: fixed;
-    bottom: 0;
+    bottom: 12px; /* مرتفع عن قاع الشاشة بمقدار 12px عشان ميبقاش لازق */
     left: 50%;
     transform: translateX(-50%);
-    width: 100%;
-    max-width: 440px;
-    height: 56px;
-    background-color: #09090b;
-    border-top: 2px solid #27272a;
+    width: calc(100% - 24px);
+    max-width: 416px;
+    min-height: 54px;
+    background-color: var(--nav-bg);
+    border: 1px solid var(--nav-border);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
     display: flex;
     justify-content: space-around;
-    align-items: center;
+    align-items: stretch;
     z-index: 100;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding: 2px 4px;
 }
 
 .nav-tab {
     flex: 1;
-    height: 100%;
+    min-width: 44px; /* قاعدة 44 بكسل */
+    min-height: 48px; /* قاعدة 44 بكسل */
     background: none;
     border: none;
     border-top: 2px solid transparent;
-    color: #71717a;
+    color: var(--text-muted);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 3px;
     cursor: pointer;
-    padding: 4px 0;
+    padding: 4px 2px;
     outline: none;
 }
 
 .nav-tab:active {
-    background-color: #18181b;
+    background-color: var(--nav-active-bg);
 }
 
 .nav-tab.active {
-    color: #10b981;
-    border-top: 2px solid #10b981;
-    background-color: #121215;
+    color: var(--nav-active-color);
+    border-top: 2px solid var(--nav-active-color);
+    background-color: var(--nav-active-bg);
 }
 
 .nav-icon {
@@ -460,7 +541,7 @@ button.mining-gem, .mining-gem {
 .section-title {
     font-size: 17px;
     font-weight: 900;
-    color: #ffffff;
+    color: var(--text-primary);
     margin-bottom: 12px;
     text-align: center;
 }
@@ -468,19 +549,19 @@ button.mining-gem, .mining-gem {
 .subsection-title {
     font-size: 14px;
     font-weight: 800;
-    color: #ffffff;
+    color: var(--text-primary);
     margin-top: 14px;
     margin-bottom: 8px;
 }
 
 .withdraw-rules {
-    background-color: #121215;
-    border: 1px solid #27272a;
-    border-right: 4px solid #10b981;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-right: 4px solid var(--accent-emerald);
     padding: 10px 12px;
     font-size: 12px;
     font-weight: 600;
-    color: #d4d4d8;
+    color: var(--text-secondary);
     margin-bottom: 14px;
 }
 
@@ -488,7 +569,7 @@ button.mining-gem, .mining-gem {
     display: block;
     font-size: 12px;
     font-weight: 700;
-    color: #a1a1aa;
+    color: var(--text-secondary);
     margin-bottom: 6px;
 }
 
@@ -504,21 +585,24 @@ button.mining-gem, .mining-gem {
 }
 
 .wallet-box {
-    display: block;
-    padding: 10px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px; /* قاعدة 44 بكسل */
+    padding: 8px 6px;
     text-align: center;
     font-weight: 700;
     font-size: 12px;
-    border: 1px solid #27272a;
+    border: 1px solid var(--border-color);
     cursor: pointer;
-    background-color: #121215;
-    color: #d4d4d8;
+    background-color: var(--bg-card);
+    color: var(--text-secondary);
 }
 
 .wallet-option input:checked + .wallet-box {
-    border-color: #10b981;
-    background-color: #18181b;
-    color: #ffffff;
+    border-color: var(--accent-emerald);
+    background-color: var(--bg-subtle);
+    color: var(--text-primary);
 }
 
 .wallet-box.vf { border-top: 3px solid #e60000; }
@@ -528,12 +612,13 @@ button.mining-gem, .mining-gem {
 
 .text-input {
     width: 100%;
+    min-height: 44px; /* قاعدة 44 بكسل */
     padding: 11px;
     font-size: 14px;
     font-weight: 600;
-    border: 1px solid #27272a;
-    background-color: #121215;
-    color: #ffffff;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-primary);
     margin-bottom: 12px;
     outline: none;
     direction: ltr;
@@ -541,26 +626,26 @@ button.mining-gem, .mining-gem {
 }
 
 .text-input:focus {
-    border-color: #10b981;
-    background-color: #18181b;
+    border-color: var(--accent-emerald);
+    background-color: var(--bg-card);
 }
 
 .btn-submit {
-    background-color: #059669;
+    background-color: var(--accent-emerald-dark);
     color: #ffffff;
-    border: 1px solid #10b981;
+    border: 1px solid var(--accent-emerald);
     margin-top: 4px;
     margin-bottom: 12px;
 }
 
 .btn-submit:hover {
-    background-color: #047857;
+    background-color: var(--accent-emerald);
 }
 
 .divider {
     border: 0;
     height: 1px;
-    background-color: #27272a;
+    background-color: var(--border-color);
     margin: 12px 0;
     flex-shrink: 0;
 }
@@ -572,14 +657,14 @@ button.mining-gem, .mining-gem {
 
 .empty-msg {
     text-align: center;
-    color: #71717a;
+    color: var(--text-muted);
     font-size: 13px;
     padding: 18px 0;
 }
 
 .history-item {
-    border: 1px solid #27272a;
-    background-color: #121215;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-card);
     padding: 10px 12px;
     margin-bottom: 8px;
 }
@@ -594,7 +679,7 @@ button.mining-gem, .mining-gem {
 .history-amount {
     font-size: 14px;
     font-weight: 800;
-    color: #ffffff;
+    color: var(--text-primary);
 }
 
 .history-status {
@@ -625,15 +710,15 @@ button.mining-gem, .mining-gem {
     display: flex;
     justify-content: space-between;
     font-size: 11px;
-    color: #71717a;
+    color: var(--text-muted);
     font-weight: 600;
 }
 
 /* ================= الشاشة 3: إثباتات الدفع ================= */
 .proofs-header-card {
-    background-color: #121215;
-    border: 1px solid #27272a;
-    border-right: 4px solid #10b981;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-right: 4px solid var(--accent-emerald);
     padding: 10px 12px;
     margin-bottom: 12px;
 }
@@ -641,26 +726,28 @@ button.mining-gem, .mining-gem {
 .proofs-desc {
     font-size: 11.5px;
     font-weight: 600;
-    color: #a1a1aa;
+    color: var(--text-secondary);
     line-height: 1.5;
     margin-bottom: 10px;
 }
 
 .btn-channel-link {
-    background-color: #18181b;
-    color: #ffffff;
-    border: 1px solid #10b981;
+    background-color: var(--bg-subtle);
+    color: var(--text-primary);
+    border: 1px solid var(--accent-emerald);
     font-size: 12px;
-    padding: 10px;
+    min-height: 44px; /* قاعدة 44 بكسل */
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    display: block;
     text-decoration: none;
     font-weight: 700;
 }
 
 .proof-item {
-    border: 1px solid #27272a;
-    background-color: #121215;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-card);
     padding: 10px 12px;
     margin-bottom: 8px;
 }
@@ -675,7 +762,7 @@ button.mining-gem, .mining-gem {
 .proof-amount {
     font-size: 15px;
     font-weight: 900;
-    color: #10b981;
+    color: var(--accent-emerald);
 }
 
 .proof-badge {
@@ -692,7 +779,7 @@ button.mining-gem, .mining-gem {
     justify-content: space-between;
     font-size: 11.5px;
     font-weight: 700;
-    color: #d4d4d8;
+    color: var(--text-secondary);
     margin-bottom: 4px;
 }
 
@@ -700,14 +787,14 @@ button.mining-gem, .mining-gem {
     display: flex;
     justify-content: space-between;
     font-size: 11px;
-    color: #71717a;
+    color: var(--text-muted);
     font-weight: 600;
 }
 
 /* ================= الشاشة 4: لوحة المتصدرين ================= */
 .leader-item {
-    border: 1px solid #27272a;
-    background-color: #121215;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-card);
     padding: 10px 12px;
     margin-bottom: 8px;
     display: flex;
@@ -718,9 +805,9 @@ button.mining-gem, .mining-gem {
 .leader-rank {
     width: 28px;
     height: 28px;
-    background-color: #18181b;
-    border: 1px solid #3f3f46;
-    color: #ffffff;
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-highlight);
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -740,13 +827,13 @@ button.mining-gem, .mining-gem {
 .leader-name {
     font-size: 13px;
     font-weight: 800;
-    color: #ffffff;
+    color: var(--text-primary);
 }
 
 .leader-sub {
     font-size: 11px;
     font-weight: 600;
-    color: #71717a;
+    color: var(--text-muted);
 }
 
 .leader-stats {
@@ -756,11 +843,11 @@ button.mining-gem, .mining-gem {
 .leader-tokens {
     font-size: 13px;
     font-weight: 900;
-    color: #10b981;
+    color: var(--accent-emerald);
 }
 
 .leader-paid {
     font-size: 10.5px;
     font-weight: 600;
-    color: #71717a;
+    color: var(--text-muted);
 }

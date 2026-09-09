@@ -8,6 +8,39 @@ if (tg) {
     }
 }
 
+// إدارة وضع النهار والليل (Day & Night Mode)
+const btnThemeToggle = document.getElementById("btn-theme-toggle");
+const themeIconSun = document.getElementById("theme-icon-sun");
+const themeIconMoon = document.getElementById("theme-icon-moon");
+
+function initTheme() {
+    const savedTheme = localStorage.getItem("weki_theme") || "dark";
+    applyTheme(savedTheme);
+}
+
+function applyTheme(theme) {
+    if (theme === "light") {
+        document.body.classList.remove("theme-dark");
+        document.body.classList.add("theme-light");
+        if (themeIconSun) themeIconSun.classList.remove("hidden");
+        if (themeIconMoon) themeIconMoon.classList.add("hidden");
+    } else {
+        document.body.classList.remove("theme-light");
+        document.body.classList.add("theme-dark");
+        if (themeIconSun) themeIconSun.classList.add("hidden");
+        if (themeIconMoon) themeIconMoon.classList.remove("hidden");
+    }
+    localStorage.setItem("weki_theme", theme);
+}
+
+if (btnThemeToggle) {
+    btnThemeToggle.addEventListener("click", () => {
+        const isLight = document.body.classList.contains("theme-light");
+        applyTheme(isLight ? "dark" : "light");
+    });
+}
+initTheme();
+
 // عناصر واجهة اللعبة
 const userGreeting = document.getElementById("user-greeting");
 const userTokensEl = document.getElementById("user-tokens");
