@@ -12,46 +12,45 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=20260909_06">
 </head>
 <body>
 
     <div class="container">
         
-        <!-- الترويسة الرئيسية للعبة -->
+        <!-- الترويسة المدمجة والأنيقة -->
         <header class="app-header">
-            <h1 class="main-title">WEKI Miner</h1>
+            <div class="header-brand">WEKI MINER</div>
             <p id="user-greeting" class="user-greeting">أهلاً بيك في عالم التعدين</p>
         </header>
 
-        <!-- رسالة التنبيهات العامة -->
+        <!-- صندوق التنبيهات -->
         <div id="alert-box" class="alert-box hidden"></div>
 
-        <!-- ================= الشاشة 1: اللعبة والتعدين ================= -->
+        <!-- ================= الشاشة 1: شاشة التعدين الرئيسية ================= -->
         <section id="screen-home" class="screen active">
             
-            <!-- بطاقة رصيد العملات -->
-            <div class="card balance-card">
-                <span class="card-label">رصيد عملات WEKI المجمعة</span>
-                <div class="balance-amount"><span id="user-tokens">0</span> <small>$WEKI</small></div>
-                <div class="cash-value">القيمة التقديرية: <span id="user-balance">0.00</span> جنيه مصري</div>
-                <div class="balance-note">عملاتك بتزيد مع كل نقرة ومابتنقصش أبداً إلا وقت السحب</div>
-            </div>
-
-            <!-- معلومات الطاقة ومستوى التعدين -->
-            <div class="card stat-card">
-                <div class="stat-item">
-                    <span class="stat-title">مستوى التعدين:</span>
-                    <span id="miner-level" class="stat-val">مستوى 1 (+1)</span>
+            <!-- بطاقة الحالة والرصيد المدمجة العصرية -->
+            <div class="card stat-grid-card">
+                <div class="stat-col balance-col">
+                    <span class="col-label">الرصيد المتاح</span>
+                    <div class="tokens-val"><span id="user-tokens">0</span> <small>$WEKI</small></div>
+                    <div class="cash-val">يساوي: <span id="user-balance">0.00</span> جنيه</div>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-title">طاقة البطارية:</span>
-                    <span id="miner-energy" class="stat-val">100 / 100</span>
+                <div class="stat-col-divider"></div>
+                <div class="stat-col level-col">
+                    <span class="col-label">جهاز التعدين</span>
+                    <div id="miner-level" class="level-val">مستوى 1</div>
+                    <div id="tap-gain-label" class="rate-val">+1 عملة/نقرة</div>
                 </div>
             </div>
 
-            <!-- شريط الطاقة وتوضيح الشحن التلقائي -->
-            <div class="energy-section">
+            <!-- شريط الطاقة والشحن التلقائي -->
+            <div class="energy-panel">
+                <div class="energy-row">
+                    <span class="energy-label">طاقة البطارية</span>
+                    <span id="miner-energy" class="energy-count" dir="ltr">100 / 100</span>
+                </div>
                 <div class="energy-bar-container">
                     <div id="energy-progress" class="energy-bar-fill" style="width: 100%;"></div>
                 </div>
@@ -61,7 +60,7 @@
                 </div>
             </div>
 
-            <!-- منطقة التعدين المبتكرة الهندسية (شعار تعدين ماسي بدون انحناءات وبدون سكرول) -->
+            <!-- مسرح التعدين الهندسي المركزي -->
             <div class="mining-stage">
                 <div id="tap-particles" class="tap-particles"></div>
                 <button id="btn-mine-tap" class="mining-gem" type="button" onclick="onUserTap(event)">
@@ -75,58 +74,31 @@
                             <polygon points="22,12 28,6 34,14 26,20" fill="#10b981"/>
                         </svg>
                         <span class="gem-title">انقر للتعدين</span>
-                        <span id="tap-gain-label" class="gem-sub">+1 عملة لكل نقرة</span>
                     </div>
                 </button>
             </div>
 
-            <!-- أدوات ومعززات الطاقة -->
-            <div class="boost-section">
-                <button id="btn-watch-ad" class="btn btn-boost">
-                    <span class="btn-text">شحن البطارية فوراً (مشاهدة فيديو)</span>
+            <!-- أزرار الإجراءات السريعة (عمودين متجاورين فقط بدون تكديس رأسي) -->
+            <div class="quick-actions-grid">
+                <button id="btn-watch-ad" class="btn btn-boost" type="button">
+                    <span class="btn-text">شحن فوري (فيديو)</span>
                 </button>
-                <button id="btn-upgrade-miner" class="btn btn-upgrade">
-                    <span class="btn-text" id="upgrade-btn-text">ترقية جهاز التعدين (500 عملة)</span>
+                <button id="btn-upgrade-miner" class="btn btn-upgrade" type="button">
+                    <span class="btn-text" id="upgrade-btn-text">ترقية (500 عملة)</span>
                 </button>
             </div>
 
-            <hr class="divider">
-
-            <!-- زر التوجه للمحفظة واستبدال العملات -->
-            <button id="btn-go-withdraw" class="btn btn-withdraw-nav" onclick="openWithdrawScreen()">
-                محفظة استبدال العملات بكاش
-            </button>
-
-            <!-- زر إثباتات الدفع والتأكيدات الحية (موافق للبند 8) -->
-            <button id="btn-go-proofs" class="btn btn-proofs-nav" onclick="openProofsScreen()">
-                إثباتات وتأكيدات الدفع الحية
-            </button>
-
-            <!-- زر لوحة المتصدرين وقائمة الشرف -->
-            <button id="btn-go-leaderboard" class="btn btn-secondary" onclick="openLeaderboardScreen()">
-                لوحة المتصدرين وقائمة الشرف
-            </button>
-
-            <!-- زر سجل طلباتي الخاصة -->
-            <button id="btn-go-history" class="btn btn-secondary" onclick="openHistoryScreen()">
-                سجل طلباتي وسحوباتي
-            </button>
-
         </section>
 
-
-        <!-- ================= الشاشة 2: محفظة استبدال العملات ================= -->
+        <!-- ================= الشاشة 2: المحفظة وسجل السحب ================= -->
         <section id="screen-withdraw" class="screen hidden">
-            
-            <h2 class="section-title">محفظة استبدال عملات WEKI</h2>
+            <h2 class="section-title">محفظة استبدال العملات</h2>
             
             <div class="withdraw-rules">
                 أقل حد لاستبدال العملات هو: <b id="min-tokens-text">100,000</b> عملة (<b id="min-withdraw-text">20</b> جنيه).
             </div>
 
             <form id="withdraw-form">
-                
-                <!-- اختيار المحفظة -->
                 <label class="input-label">1. اختار محفظتك:</label>
                 <div class="wallets-grid">
                     <label class="wallet-option">
@@ -134,59 +106,40 @@
                         <span class="wallet-box vf">فودافون كاش</span>
                     </label>
                     <label class="wallet-option">
-                        <input type="radio" name="provider" value="orange_cash">
+                        <input type="radio" name="orange_cash">
                         <span class="wallet-box og">أورنج كاش</span>
                     </label>
                     <label class="wallet-option">
-                        <input type="radio" name="provider" value="etisalat_cash">
+                        <input type="radio" name="etisalat_cash">
                         <span class="wallet-box et">اتصالات كاش</span>
                     </label>
                     <label class="wallet-option">
-                        <input type="radio" name="provider" value="we_cash">
+                        <input type="radio" name="we_cash">
                         <span class="wallet-box we">وي كاش</span>
                     </label>
                 </div>
 
-                <!-- رقم الموبايل -->
-                <label for="withdraw-phone" class="input-label">2. اكتب رقم الموبايل المسجل عليه المحفظة:</label>
+                <label for="withdraw-phone" class="input-label">2. رقم الموبايل المسجل عليه المحفظة:</label>
                 <input type="tel" id="withdraw-phone" class="text-input" placeholder="مثال: 01012345678" maxlength="11" required>
 
-                <!-- المبلغ المراد سحبه -->
-                <label for="withdraw-amount" class="input-label">3. اكتب المبلغ اللي عايز تسحبه (جنيه):</label>
+                <label for="withdraw-amount" class="input-label">3. المبلغ المطلوب سحبه (جنيه):</label>
                 <input type="number" id="withdraw-amount" class="text-input" placeholder="مثال: 20" step="any" required>
 
-                <!-- زر الإرسال -->
                 <button type="submit" id="btn-submit-withdraw" class="btn btn-submit">
                     تأكيد طلب السحب
                 </button>
             </form>
 
-            <button id="btn-back-from-withdraw" class="btn btn-secondary" onclick="openHomeScreen()">
-                رجوع للتعدين
-            </button>
+            <hr class="divider">
 
-        </section>
-
-
-        <!-- ================= الشاشة 3: سجل السحوبات ================= -->
-        <section id="screen-history" class="screen hidden">
-            
-            <h2 class="section-title">سجل عمليات السحب</h2>
-            
+            <h3 class="subsection-title">سجل طلبات السحب الخاصة بك</h3>
             <div id="history-list" class="history-list">
                 <p class="empty-msg">بيحمل السجل...</p>
             </div>
-
-            <button id="btn-back-from-history" class="btn btn-secondary" onclick="openHomeScreen()">
-                رجوع للتعدين
-            </button>
-
         </section>
 
-
-        <!-- ================= الشاشة 4: إثباتات الدفع المباشرة (مطابقة للبند 8) ================= -->
+        <!-- ================= الشاشة 3: إثباتات وتأكيدات الدفع ================= -->
         <section id="screen-proofs" class="screen hidden">
-            
             <h2 class="section-title">إثباتات وتأكيدات الدفع الحية</h2>
             
             <div class="proofs-header-card">
@@ -199,17 +152,10 @@
             <div id="proofs-list" class="proofs-list">
                 <p class="empty-msg">بيحمل سجل الإثباتات...</p>
             </div>
-
-            <button id="btn-back-from-proofs" class="btn btn-secondary" onclick="openHomeScreen()">
-                رجوع للتعدين
-            </button>
-
         </section>
 
-
-        <!-- ================= الشاشة 5: لوحة المتصدرين وقائمة الشرف ================= -->
+        <!-- ================= الشاشة 4: لوحة المتصدرين ================= -->
         <section id="screen-leaderboard" class="screen hidden">
-            
             <h2 class="section-title">لوحة المتصدرين وقائمة الشرف</h2>
             
             <div class="withdraw-rules">
@@ -219,15 +165,46 @@
             <div id="leaderboard-list" class="leaderboard-list">
                 <p class="empty-msg">بيحمل لوحة المتصدرين...</p>
             </div>
-
-            <button id="btn-back-from-leaderboard" class="btn btn-secondary" onclick="openHomeScreen()">
-                رجوع للتعدين
-            </button>
-
         </section>
 
     </div>
 
-    <script src="app.js?v=20260909_05"></script>
+    <!-- شريط التنقل السفلي الثابت العصري (Bottom Navigation Dock) -->
+    <nav class="bottom-nav">
+        <button type="button" class="nav-tab active" data-target="screen-home">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                <polyline points="2 17 12 22 22 17" />
+                <polyline points="2 12 12 17 22 12" />
+            </svg>
+            <span class="nav-text">التعدين</span>
+        </button>
+        <button type="button" class="nav-tab" data-target="screen-withdraw">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="4" width="20" height="16" />
+                <line x1="2" y1="10" x2="22" y2="10" />
+                <line x1="16" y1="15" x2="18" y2="15" />
+            </svg>
+            <span class="nav-text">المحفظة</span>
+        </button>
+        <button type="button" class="nav-tab" data-target="screen-proofs">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                <polyline points="9 12 11 14 15 10" />
+            </svg>
+            <span class="nav-text">الإثباتات</span>
+        </button>
+        <button type="button" class="nav-tab" data-target="screen-leaderboard">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="20" x2="18" y2="10" />
+                <line x1="12" y1="20" x2="12" y2="4" />
+                <line x1="6" y1="20" x2="6" y2="14" />
+                <line x1="2" y1="20" x2="22" y2="20" />
+            </svg>
+            <span class="nav-text">المتصدرين</span>
+        </button>
+    </nav>
+
+    <script src="app.js?v=20260909_06"></script>
 </body>
 </html>

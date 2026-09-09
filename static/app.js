@@ -87,64 +87,89 @@ function showAlert(message, type = "info") {
 
 // التنقل بين الشاشات
 
-// دوال التنقل العامة المتاحة للأزرار المباشرة
-window.openProofsScreen = function() {
-    showScreen(document.getElementById("screen-proofs") || screenProofs);
-    loadPublicProofs();
-};
+// نظام التنقل الحديث وشريط التبويبات السفلي (Bottom Nav Dock)
+function switchScreen(screenId) {
+    const screens = [
+        document.getElementById("screen-home"),
+        document.getElementById("screen-withdraw"),
+        document.getElementById("screen-history"),
+        document.getElementById("screen-proofs"),
+        document.getElementById("screen-leaderboard")
+    ];
+    
+    screens.forEach(s => {
+        if (s) s.classList.add("hidden");
+    });
+    
+    const targetScreen = document.getElementById(screenId);
+    if (targetScreen) {
+        targetScreen.classList.remove("hidden");
+    }
 
-window.openLeaderboardScreen = function() {
-    showScreen(document.getElementById("screen-leaderboard") || screenLeaderboard);
-    loadLeaderboard();
-};
+    // تحديث التاب النشط في شريط التنقل السفلي
+    document.querySelectorAll(".nav-tab").forEach(tab => {
+        const tabTarget = tab.getAttribute("data-target");
+        if (tabTarget === screenId || (screenId === "screen-history" && tabTarget === "screen-withdraw")) {
+            tab.classList.add("active");
+        } else {
+            tab.classList.remove("active");
+        }
+    });
 
-window.openHomeScreen = function() {
-    showScreen(document.getElementById("screen-home") || screenHome);
-};
-
-window.openWithdrawScreen = function() {
-    showScreen(document.getElementById("screen-withdraw") || screenWithdraw);
-};
-
-window.openHistoryScreen = function() {
-    showScreen(document.getElementById("screen-history") || screenHistory);
-    loadWithdrawalHistory();
-};
-
-function showScreen(screen) {
-    screenHome.classList.add("hidden");
-    screenWithdraw.classList.add("hidden");
-    screenHistory.classList.add("hidden");
-    if (screenProofs) screenProofs.classList.add("hidden");
-    if (screenLeaderboard) screenLeaderboard.classList.add("hidden");
-    screen.classList.remove("hidden");
+    // تحميل البيانات التلقائي حسب الشاشة
+    if (screenId === "screen-withdraw" || screenId === "screen-history") {
+        loadWithdrawalHistory();
+    } else if (screenId === "screen-proofs") {
+        loadPublicProofs();
+    } else if (screenId === "screen-leaderboard") {
+        loadLeaderboard();
+    }
 }
 
-btnGoWithdraw.addEventListener("click", () => showScreen(screenWithdraw));
-btnGoHistory.addEventListener("click", () => {
-    showScreen(screenHistory);
-    loadWithdrawalHistory();
+// ربط نقرات التبويبات السفلية
+document.querySelectorAll(".nav-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+        const target = tab.getAttribute("data-target");
+        if (target) {
+            switchScreen(target);
+        }
+    });
 });
-btnBackFromWithdraw.addEventListener("click", () => showScreen(screenHome));
-btnBackFromHistory.addEventListener("click", () => showScreen(screenHome));
 
-if (btnGoProofs) btnGoProofs.addEventListener("click", () => {
-    showScreen(screenProofs);
-    loadPublicProofs();
-});
-if (btnGoLeaderboard) btnGoLeaderboard.addEventListener("click", () => {
-    showScreen(screenLeaderboard);
-    loadLeaderboard();
-});
-if (btnBackFromProofs) btnBackFromProofs.addEventListener("click", () => showScreen(screenHome));
-if (btnBackFromLeaderboard) btnBackFromLeaderboard.addEventListener("click", () => showScreen(screenHome));
+window.openProofsScreen = () => switchScreen("screen-proofs");
+window.openLeaderboardScreen = () => switchScreen("screen-leaderboard");
+window.openHomeScreen = () => switchScreen("screen-home");
+window.openWithdrawScreen = () => switchScreen("screen-withdraw");
+window.openHistoryScreen = () => switchScreen("screen-withdraw");
+
+function showScreen(screen) {
+    if (typeof screen === "string") {
+        switchScreen(screen);
+    } else if (screen && screen.id) {
+        switchScreen(screen.id);
+    }
+}
+
+if (btnGoWithdraw) btnGoWithdraw.addEventListener("click", () => switchScreen("screen-withdraw"));
+if (btnGoHistory) btnGoHistory.addEventListener("click", () => switchScreen("screen-withdraw"));
+if (btnBackFromWithdraw) btnBackFromWithdraw.addEventListener("click", () => switchScreen("screen-home"));
+if (btnBackFromHistory) btnBackFromHistory.addEventListener("click", () => switchScreen("screen-home"));
+if (btnGoProofs) btnGoProofs.addEventListener("click", () => switchScreen("screen-proofs"));
+if (btnGoLeaderboard) btnGoLeaderboard.addEventListener("click", () => switchScreen("screen-leaderboard"));
+if (btnBackFromProofs) btnBackFromProofs.addEventListener("click", () => switchScreen("screen-home"));
+if (btnBackFromLeaderboard) btnBackFromLeaderboard.addEventListener("click", () => switchScreen("screen-home"));
 
 
 // تحديث شريط وبيانات الطاقة
 function updateEnergyDisplay() {
-    minerEnergyEl.innerText = `${currentEnergy} / ${maxEnergy}`;
-    const pct = Math.max(0, Math.min(100, (currentEnergy / maxEnergy) * 100));
-    energyProgress.style.width = `${pct}%`;
+    if (minerEnergyEl) {
+        minerEnergyEl.innerText = `${currentEnergy} / ${maxEnergy}`;
+        minerEnergyEl.setAttribute("dir", "ltr");
+    }
+    if (energyProgress) {
+        const pct = Math.max(0, Math.min(100, (currentEnergy / maxEnergy) * 100));
+        energyProgress.style.width = `${pct}%`;
+    }
 
     const countdownEl = document.getElementById("energy-countdown");
     if (countdownEl) {
@@ -171,11 +196,11 @@ function updateUIFromUser(user) {
     maxEnergy = user.max_energy || 100;
     minerLevel = user.miner_level || 1;
 
-    userTokensEl.innerText = currentTokens.toLocaleString();
-    userBalanceEl.innerText = currentBalance.toFixed(2);
-    minerLevelEl.innerText = `مستوى ${minerLevel} (+${minerLevel})`;
-    tapGainLabel.innerText = `+${minerLevel} عملة لكل نقرة`;
-    upgradeBtnText.innerText = `ترقية جهاز التعدين (${minerLevel * 500} عملة)`;
+    if (userTokensEl) userTokensEl.innerText = currentTokens.toLocaleString();
+    if (userBalanceEl) userBalanceEl.innerText = currentBalance.toFixed(2);
+    if (minerLevelEl) minerLevelEl.innerText = `مستوى ${minerLevel}`;
+    if (tapGainLabel) tapGainLabel.innerText = `+${minerLevel} عملة/نقرة`;
+    if (upgradeBtnText) upgradeBtnText.innerText = `ترقية (${(minerLevel * 500).toLocaleString()} عملة)`;
     updateEnergyDisplay();
 }
 
