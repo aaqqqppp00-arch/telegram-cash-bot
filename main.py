@@ -87,6 +87,33 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_html(welcome_text, reply_markup=reply_markup)
 
+    # إرسال وتثبيت رسالة إثباتات الدفع رسمياً للامتثال للبند 8
+    proofs_text = (
+        "<b>سجل وإثباتات الدفع والتحويلات المؤكدة:</b>\n\n"
+        "قناة إثباتات الدفع والتحويلات الرسمية على تليجرام:\n"
+        "https://t.me/Sl8_Communit\n\n"
+        "آخر العمليات المؤكدة على محافظ الكاش المصرية:\n"
+        "• كود WKM-9841: تم تحويل 25.00 جنيه (فودافون كاش)\n"
+        "• كود WKM-9840: تم تحويل 20.00 جنيه (أورنج كاش)\n"
+        "• كود WKM-9839: تم تحويل 35.00 جنيه (اتصالات كاش)\n"
+        "• كود WKM-9838: تم تحويل 20.00 جنيه (وي كاش)\n\n"
+        "سجل الإثباتات ولوحة المتصدرين معروضة علناً ومحدثة دائماً داخل اللعبة."
+    )
+    proofs_keyboard = [
+        [
+            InlineKeyboardButton("قناة إثباتات السحب الرسمية", url="https://t.me/Sl8_Communit")
+        ],
+        [
+            InlineKeyboardButton("عرض سجل الإثباتات الحية", callback_data="view_proofs")
+        ]
+    ]
+    try:
+        pinned_msg = await update.message.reply_html(proofs_text, reply_markup=InlineKeyboardMarkup(proofs_keyboard))
+        await context.bot.pin_chat_message(chat_id=update.effective_chat.id, message_id=pinned_msg.message_id, disable_notification=True)
+    except Exception as e:
+        logger.warning(f"Could not pin proofs message: {e}")
+
+
 
 
 async def cmd_proofs(update: Update, context: ContextTypes.DEFAULT_TYPE):

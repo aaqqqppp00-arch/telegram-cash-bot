@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20260909_06">
+    <link rel="stylesheet" href="style.css?v=20260909_07">
 </head>
 <body>
 
@@ -63,6 +63,15 @@
                     <span class="col-label">جهاز التعدين</span>
                     <div id="miner-level" class="level-val">مستوى 1</div>
                     <div id="tap-gain-label" class="rate-val">+1 عملة/نقرة</div>
+                </div>
+            </div>
+
+            <!-- شريط إثباتات وتأكيدات الدفع الحي (مطابق للبند 8) -->
+            <div class="proofs-ticker-box" onclick="openProofsScreen()">
+                <div class="ticker-content">
+                    <span class="ticker-badge">إثباتات الدفع</span>
+                    <span class="ticker-text" id="home-proof-ticker">آخر تحويل: 25.00 ج (فودافون كاش)</span>
+                    <span class="ticker-arrow">&larr;</span>
                 </div>
             </div>
 
@@ -226,6 +235,6 @@
         </button>
     </nav>
 
-    <script src="app.js?v=20260909_06"></script>
+    <script src="app.js?v=20260909_07"></script>
 </body>
 </html>

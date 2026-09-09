@@ -268,6 +268,7 @@ async function loadUserData() {
             minWithdrawText.innerText = minWithdrawal.toFixed(0);
 
             initAdsgram();
+            fetchLatestProofTicker();
         } else {
             showAlert("حصلت مشكلة في تحميل بيانات التعدين: " + (data.error || ""), "error");
         }
@@ -732,7 +733,27 @@ async function loadLeaderboard() {
         }
     } catch (err) {
         console.error("Leaderboard error:", err);
-        leaderboardList.innerHTML = "<p class='empty-msg'>حصلت مشكلة في تحميل المتصدرين.</p>";
+    }
+}
+
+// جلب وتحديث شريط الإثباتات في الصفحة الرئيسية (مطابق للبند 8)
+async function fetchLatestProofTicker() {
+    try {
+        const res = await fetch("/api/proofs");
+        const data = await res.json();
+        const tickerEl = document.getElementById("home-proof-ticker");
+        if (tickerEl && data.success && data.proofs && data.proofs.length > 0) {
+            const p = data.proofs[0];
+            const pName = {
+                "vodafone_cash": "فودافون كاش",
+                "orange_cash": "أورنج كاش",
+                "etisalat_cash": "اتصالات كاش",
+                "we_cash": "وي كاش"
+            }[p.provider] || p.provider;
+            tickerEl.innerText = `آخر تحويل: ${p.amount.toFixed(2)} ج (${pName}) - ${p.time_ago}`;
+        }
+    } catch (e) {
+        console.error("Ticker fetch error:", e);
     }
 }
 

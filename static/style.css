@@ -261,6 +261,64 @@ html, body {
     margin-top: 2px;
 }
 
+/* شريط إثباتات الدفع التفاعلي على الشاشة الرئيسية (البند 8) */
+.proofs-ticker-box {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 0px !important;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    min-height: 44px;
+    flex-shrink: 0;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.proofs-ticker-box:hover, .proofs-ticker-box:active {
+    background-color: var(--bg-card-hover);
+    border-color: var(--accent-emerald);
+}
+
+.ticker-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.ticker-badge {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: var(--accent-emerald);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 8px;
+    border: 1px solid var(--accent-emerald);
+    border-radius: 0px !important;
+    white-space: nowrap;
+}
+
+.ticker-text {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    text-align: right;
+    margin: 0 6px;
+}
+
+.ticker-arrow {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent-emerald);
+}
+
 /* قسم شريط الطاقة */
 .energy-panel {
     background-color: var(--bg-card);
