@@ -19,7 +19,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN", "YOUR_BOT_TOKEN_HERE")
 ADMIN_ID = int(os.getenv("ADMIN_ID", "0"))
 
 # معرف الإعلان من Adsgram (Block ID)
-ADSGRAM_BLOCK_ID = os.getenv("ADSGRAM_BLOCK_ID", "46960")
+ADSGRAM_BLOCK_ID = os.getenv("ADSGRAM_BLOCK_ID", "47027")
 
 # المكافأة لكل إعلان مكتمل بالجنيه المصري (مثال: 0.05 = 5 قروش)
 REWARD_PER_AD = float(os.getenv("REWARD_PER_AD", "0.05"))
