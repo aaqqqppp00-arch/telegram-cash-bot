@@ -15,6 +15,8 @@ from telegram.ext import (
     Application,
     CommandHandler,
     CallbackQueryHandler,
+    MessageHandler,
+    filters,
     ContextTypes
 )
 
@@ -319,6 +321,7 @@ if bot_app:
     bot_app.add_handler(CommandHandler("leaderboard", cmd_leaderboard))
     bot_app.add_handler(CallbackQueryHandler(handle_public_callback, pattern=r"^view_"))
     bot_app.add_handler(CallbackQueryHandler(handle_admin_callback, pattern=r"^(appr|rejc)_"))
+    bot_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, cmd_start))
 
 
 # --- إعداد تطبيق FastAPI ودورة الحياة (Lifespan) ---
