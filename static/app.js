@@ -26,6 +26,15 @@ const tapParticles = document.getElementById("tap-particles");
 const screenHome = document.getElementById("screen-home");
 const screenWithdraw = document.getElementById("screen-withdraw");
 const screenHistory = document.getElementById("screen-history");
+const screenProofs = document.getElementById("screen-proofs");
+const screenLeaderboard = document.getElementById("screen-leaderboard");
+const btnGoProofs = document.getElementById("btn-go-proofs");
+const btnGoLeaderboard = document.getElementById("btn-go-leaderboard");
+const btnBackFromProofs = document.getElementById("btn-back-from-proofs");
+const btnBackFromLeaderboard = document.getElementById("btn-back-from-leaderboard");
+const proofsList = document.getElementById("proofs-list");
+const leaderboardList = document.getElementById("leaderboard-list");
+
 
 // الأزرار
 const btnMineTap = document.getElementById("btn-mine-tap");
@@ -81,6 +90,8 @@ function showScreen(screen) {
     screenHome.classList.add("hidden");
     screenWithdraw.classList.add("hidden");
     screenHistory.classList.add("hidden");
+    if (screenProofs) screenProofs.classList.add("hidden");
+    if (screenLeaderboard) screenLeaderboard.classList.add("hidden");
     screen.classList.remove("hidden");
 }
 
@@ -91,6 +102,18 @@ btnGoHistory.addEventListener("click", () => {
 });
 btnBackFromWithdraw.addEventListener("click", () => showScreen(screenHome));
 btnBackFromHistory.addEventListener("click", () => showScreen(screenHome));
+
+if (btnGoProofs) btnGoProofs.addEventListener("click", () => {
+    showScreen(screenProofs);
+    loadPublicProofs();
+});
+if (btnGoLeaderboard) btnGoLeaderboard.addEventListener("click", () => {
+    showScreen(screenLeaderboard);
+    loadLeaderboard();
+});
+if (btnBackFromProofs) btnBackFromProofs.addEventListener("click", () => showScreen(screenHome));
+if (btnBackFromLeaderboard) btnBackFromLeaderboard.addEventListener("click", () => showScreen(screenHome));
+
 
 // تحديث شريط وبيانات الطاقة
 function updateEnergyDisplay() {
@@ -521,6 +544,90 @@ async function loadWithdrawalHistory() {
     } catch (err) {
         console.error("Error loading history:", err);
         historyList.innerHTML = "<p class='empty-msg'>حصلت مشكلة في تحميل السجل.</p>";
+    }
+}
+
+
+// تحميل إثباتات وتأكيدات الدفع الحية (متوافق مع البند 8)
+async function loadPublicProofs() {
+    if (!proofsList) return;
+    proofsList.innerHTML = "<p class='empty-msg'>بيحمل إثباتات الدفع...</p>";
+
+    try {
+        const res = await fetch("/api/proofs");
+        const data = await res.json();
+
+        if (data.success && data.proofs && data.proofs.length > 0) {
+            proofsList.innerHTML = "";
+            data.proofs.forEach(item => {
+                const providerName = {
+                    "vodafone_cash": "فودافون كاش",
+                    "orange_cash": "أورنج كاش",
+                    "etisalat_cash": "اتصالات كاش",
+                    "we_cash": "وي كاش"
+                }[item.provider] || item.provider;
+
+                const div = document.createElement("div");
+                div.className = "proof-item";
+                div.innerHTML = `
+                    <div class="proof-top">
+                        <span class="proof-amount">${item.amount.toFixed(2)} جنيه</span>
+                        <span class="proof-badge">تحويل ناجح ومؤكد</span>
+                    </div>
+                    <div class="proof-middle">
+                        <span>${item.user_name} (${item.phone_masked})</span>
+                        <span>${providerName}</span>
+                    </div>
+                    <div class="proof-bottom">
+                        <span>كود العملية: ${item.id}</span>
+                        <span>${item.time_ago}</span>
+                    </div>
+                `;
+                proofsList.appendChild(div);
+            });
+        } else {
+            proofsList.innerHTML = "<p class='empty-msg'>لا توجد إثباتات بعد.</p>";
+        }
+    } catch (err) {
+        console.error("Proofs error:", err);
+        proofsList.innerHTML = "<p class='empty-msg'>حصلت مشكلة في تحميل الإثباتات.</p>";
+    }
+}
+
+// تحميل لوحة المتصدرين وقائمة الشرف (متوافق مع البند 8)
+async function loadLeaderboard() {
+    if (!leaderboardList) return;
+    leaderboardList.innerHTML = "<p class='empty-msg'>بيحمل لوحة المتصدرين...</p>";
+
+    try {
+        const res = await fetch("/api/leaderboard");
+        const data = await res.json();
+
+        if (data.success && data.leaderboard && data.leaderboard.length > 0) {
+            leaderboardList.innerHTML = "";
+            data.leaderboard.forEach(item => {
+                const rankClass = item.rank <= 3 ? `top-${item.rank}` : "";
+                const div = document.createElement("div");
+                div.className = "leader-item";
+                div.innerHTML = `
+                    <div class="leader-rank ${rankClass}">#${item.rank}</div>
+                    <div class="leader-info">
+                        <div class="leader-name">${item.name}</div>
+                        <div class="leader-sub">مستوى التعدين: ${item.level}</div>
+                    </div>
+                    <div class="leader-stats">
+                        <div class="leader-tokens">${item.tokens.toLocaleString()} $WEKI</div>
+                        <div class="leader-paid">سحب: ${item.paid_out.toFixed(2)} ج</div>
+                    </div>
+                `;
+                leaderboardList.appendChild(div);
+            });
+        } else {
+            leaderboardList.innerHTML = "<p class='empty-msg'>لا توجد بيانات متصدرين حالياً.</p>";
+        }
+    } catch (err) {
+        console.error("Leaderboard error:", err);
+        leaderboardList.innerHTML = "<p class='empty-msg'>حصلت مشكلة في تحميل المتصدرين.</p>";
     }
 }
 

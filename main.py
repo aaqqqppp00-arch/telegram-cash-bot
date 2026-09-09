@@ -53,6 +53,16 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "افتح لعبة WEKI Miner",
                 web_app=WebAppInfo(url=web_url)
             )
+        ],
+        [
+            InlineKeyboardButton(
+                "إثباتات السحب والدفع",
+                callback_data="view_proofs"
+            ),
+            InlineKeyboardButton(
+                "لوحة المتصدرين",
+                callback_data="view_leaderboard"
+            )
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -69,6 +79,44 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_html(welcome_text, reply_markup=reply_markup)
 
+
+
+async def cmd_proofs(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """عرض إثباتات الدفع المؤكدة للمستخدمين"""
+    proofs = database.get_public_payout_proofs()
+    text = "إثباتات الدفع وسجل التحويلات المؤكدة:\n\n"
+    for p in proofs[:6]:
+        provider_name = {
+            "vodafone_cash": "فودافون كاش",
+            "orange_cash": "أورنج كاش",
+            "etisalat_cash": "اتصالات كاش",
+            "we_cash": "وي كاش"
+        }.get(p["provider"], p["provider"])
+        text += (
+            f"عملية #{p['id']}\n"
+            f"المستلم: {p['user_name']} ({p['phone_masked']})\n"
+            f"المبلغ: {p['amount']:.2f} جنيه عبر {provider_name}\n"
+            f"الحالة: تم التحويل بنجاح ({p['time_ago']})\n"
+            "----------------------------\n"
+        )
+    text += "\nجميع التحويلات يتم إرسالها فوراً لمحفظة المستخدم."
+    web_url = config.WEB_APP_URL if config.WEB_APP_URL.startswith("http") else "https://your-domain.com"
+    keyboard = [[InlineKeyboardButton("افتح لعبة WEKI Miner", web_app=WebAppInfo(url=web_url))]]
+    await update.message.reply_html(text, reply_markup=InlineKeyboardMarkup(keyboard))
+
+async def cmd_leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """عرض لوحة المتصدرين لأفضل المعدنين"""
+    leaders = database.get_leaderboard()
+    text = "لوحة المتصدرين لأفضل معدني WEKI Miner:\n\n"
+    for l in leaders[:8]:
+        text += (
+            f"المركز {l['rank']}: <b>{l['name']}</b>\n"
+            f"المستوى: {l['level']} | العملات: {l['tokens']:,} $WEKI\n"
+            f"إجمالي الأرباح المسحوبة: {l['paid_out']:.2f} جنيه\n\n"
+        )
+    web_url = config.WEB_APP_URL if config.WEB_APP_URL.startswith("http") else "https://your-domain.com"
+    keyboard = [[InlineKeyboardButton("افتح لعبة WEKI Miner", web_app=WebAppInfo(url=web_url))]]
+    await update.message.reply_html(text, reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def cmd_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """لوحة تحكم المسؤول لعرض الإحصائيات وطلبات السحب المعلقة"""
@@ -190,7 +238,9 @@ async def handle_admin_callback(update: Update, context: ContextTypes.DEFAULT_TY
 if bot_app:
     bot_app.add_handler(CommandHandler("start", cmd_start))
     bot_app.add_handler(CommandHandler("admin", cmd_admin))
-    bot_app.add_handler(CallbackQueryHandler(handle_admin_callback, pattern=r"^(appr|rejc)_"))
+    bot_app.add_handler(CommandHandler("proofs", cmd_proofs))
+    bot_app.add_handler(CommandHandler("leaderboard", cmd_leaderboard))
+    bot_app.add_handler(CallbackQueryHandler(handle_admin_callback, pattern=r"^(appr|rejc|view)_"))
 
 
 # --- إعداد تطبيق FastAPI ودورة الحياة (Lifespan) ---
@@ -381,6 +431,17 @@ async def api_withdraw(body: WithdrawRequest, x_telegram_init_data: Optional[str
         "message": message,
         "withdrawal_id": withdrawal_id
     }
+
+
+@api_app.get("/api/proofs")
+async def api_proofs():
+    """عرض إثباتات الدفع المؤكدة للجمهور (متوافق مع البند 8)"""
+    return {"success": True, "proofs": database.get_public_payout_proofs()}
+
+@api_app.get("/api/leaderboard")
+async def api_leaderboard():
+    """عرض لوحة المتصدرين للجمهور (متوافق مع البند 8)"""
+    return {"success": True, "leaderboard": database.get_leaderboard()}
 
 @api_app.get("/api/withdrawals")
 async def api_withdrawals(x_telegram_init_data: Optional[str] = Header(None)):

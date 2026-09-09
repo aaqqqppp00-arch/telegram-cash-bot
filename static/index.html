@@ -93,9 +93,19 @@
                 محفظة استبدال العملات بكاش
             </button>
 
-            <!-- زر سجل العمليات -->
+            <!-- زر إثباتات الدفع والتأكيدات الحية (موافق للبند 8) -->
+            <button id="btn-go-proofs" class="btn btn-proofs-nav">
+                إثباتات وتأكيدات الدفع الحية
+            </button>
+
+            <!-- زر لوحة المتصدرين وقائمة الشرف -->
+            <button id="btn-go-leaderboard" class="btn btn-secondary">
+                لوحة المتصدرين وقائمة الشرف
+            </button>
+
+            <!-- زر سجل طلباتي الخاصة -->
             <button id="btn-go-history" class="btn btn-secondary">
-                سجل عمليات التعدين والسحب
+                سجل طلباتي وسحوباتي
             </button>
 
         </section>
@@ -164,6 +174,49 @@
             </div>
 
             <button id="btn-back-from-history" class="btn btn-secondary">
+                رجوع للتعدين
+            </button>
+
+        </section>
+
+
+        <!-- ================= الشاشة 4: إثباتات الدفع المباشرة (مطابقة للبند 8) ================= -->
+        <section id="screen-proofs" class="screen hidden">
+            
+            <h2 class="section-title">إثباتات وتأكيدات الدفع الحية</h2>
+            
+            <div class="proofs-header-card">
+                <p class="proofs-desc">سجل علني بجميع التحويلات المؤكدة والناجحة لمستخدمي WEKI Miner على محافظ الكاش المصرية (فودافون كاش - أورنج كاش - اتصالات كاش - وي كاش).</p>
+                <a href="https://t.me/Weki_earn_bot" target="_blank" class="btn btn-channel-link">
+                    قناة إثباتات السحب الرسمية على تليجرام
+                </a>
+            </div>
+
+            <div id="proofs-list" class="proofs-list">
+                <p class="empty-msg">بيحمل سجل الإثباتات...</p>
+            </div>
+
+            <button id="btn-back-from-proofs" class="btn btn-secondary">
+                رجوع للتعدين
+            </button>
+
+        </section>
+
+
+        <!-- ================= الشاشة 5: لوحة المتصدرين وقائمة الشرف ================= -->
+        <section id="screen-leaderboard" class="screen hidden">
+            
+            <h2 class="section-title">لوحة المتصدرين وقائمة الشرف</h2>
+            
+            <div class="withdraw-rules">
+                قائمة بأعلى 10 معدنين مجمعين لعملات WEKI ومستبدلين للأرباح كاش.
+            </div>
+
+            <div id="leaderboard-list" class="leaderboard-list">
+                <p class="empty-msg">بيحمل لوحة المتصدرين...</p>
+            </div>
+
+            <button id="btn-back-from-leaderboard" class="btn btn-secondary">
                 رجوع للتعدين
             </button>
 

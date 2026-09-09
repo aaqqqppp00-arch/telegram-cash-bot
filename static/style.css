@@ -567,3 +567,150 @@ button.mining-gem, .mining-gem {
     color: #71717a;
     font-weight: 600;
 }
+
+
+/* زر إثباتات السحب */
+.btn-proofs-nav {
+    background-color: #065f46;
+    color: #ffffff;
+    border-color: #047857;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
+.btn-proofs-nav:hover {
+    background-color: #047857;
+}
+
+.proofs-header-card {
+    background-color: #f4f4f5;
+    border: 1px solid #e4e4e7;
+    border-right: 4px solid #059669;
+    padding: 12px;
+    margin-bottom: 14px;
+}
+
+.proofs-desc {
+    font-size: 12px;
+    font-weight: 600;
+    color: #3f3f46;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.btn-channel-link {
+    background-color: #09090b;
+    color: #ffffff;
+    font-size: 13px;
+    padding: 10px;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+}
+
+/* بطاقات إثباتات الدفع */
+.proof-item {
+    border: 1px solid #e4e4e7;
+    background-color: #fafafa;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+}
+
+.proof-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.proof-amount {
+    font-size: 16px;
+    font-weight: 900;
+    color: #059669;
+}
+
+.proof-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    background-color: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.proof-middle {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 700;
+    color: #27272a;
+    margin-bottom: 4px;
+}
+
+.proof-bottom {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #71717a;
+    font-weight: 600;
+}
+
+/* بطاقات المتصدرين */
+.leader-item {
+    border: 1px solid #e4e4e7;
+    background-color: #ffffff;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.leader-rank {
+    width: 32px;
+    height: 32px;
+    background-color: #09090b;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 14px;
+    margin-left: 12px;
+}
+
+.leader-rank.top-1 { background-color: #d97706; }
+.leader-rank.top-2 { background-color: #71717a; }
+.leader-rank.top-3 { background-color: #b45309; }
+
+.leader-info {
+    flex: 1;
+}
+
+.leader-name {
+    font-size: 14px;
+    font-weight: 800;
+    color: #09090b;
+}
+
+.leader-sub {
+    font-size: 11px;
+    font-weight: 600;
+    color: #71717a;
+}
+
+.leader-stats {
+    text-align: left;
+}
+
+.leader-tokens {
+    font-size: 14px;
+    font-weight: 900;
+    color: #059669;
+}
+
+.leader-paid {
+    font-size: 11px;
+    font-weight: 600;
+    color: #71717a;
+}
