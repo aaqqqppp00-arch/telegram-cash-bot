@@ -63,6 +63,12 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "لوحة المتصدرين",
                 callback_data="view_leaderboard"
             )
+        ],
+        [
+            InlineKeyboardButton(
+                "قناة إثباتات السحب الرسمية",
+                url="https://t.me/Sl8_Communit"
+            )
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -101,7 +107,10 @@ async def cmd_proofs(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     text += "\nجميع التحويلات يتم إرسالها فوراً لمحفظة المستخدم."
     web_url = config.WEB_APP_URL if config.WEB_APP_URL.startswith("http") else "https://your-domain.com"
-    keyboard = [[InlineKeyboardButton("افتح لعبة WEKI Miner", web_app=WebAppInfo(url=web_url))]]
+    keyboard = [
+        [InlineKeyboardButton("افتح لعبة WEKI Miner", web_app=WebAppInfo(url=web_url))],
+        [InlineKeyboardButton("قناة إثباتات السحب الرسمية", url="https://t.me/Sl8_Communit")]
+    ]
     await update.message.reply_html(text, reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def cmd_leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -115,7 +124,10 @@ async def cmd_leaderboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"إجمالي الأرباح المسحوبة: {l['paid_out']:.2f} جنيه\n\n"
         )
     web_url = config.WEB_APP_URL if config.WEB_APP_URL.startswith("http") else "https://your-domain.com"
-    keyboard = [[InlineKeyboardButton("افتح لعبة WEKI Miner", web_app=WebAppInfo(url=web_url))]]
+    keyboard = [
+        [InlineKeyboardButton("افتح لعبة WEKI Miner", web_app=WebAppInfo(url=web_url))],
+        [InlineKeyboardButton("قناة إثباتات السحب الرسمية", url="https://t.me/Sl8_Communit")]
+    ]
     await update.message.reply_html(text, reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def cmd_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -190,7 +202,10 @@ async def handle_public_callback(update: Update, context: ContextTypes.DEFAULT_T
             )
         text += "\nجميع التحويلات يتم إرسالها فوراً لمحافظ الكاش."
         web_url = config.WEB_APP_URL if config.WEB_APP_URL.startswith("http") else "https://your-domain.com"
-        keyboard = [[InlineKeyboardButton("افتح لعبة WEKI Miner", web_app=WebAppInfo(url=web_url))]]
+        keyboard = [
+        [InlineKeyboardButton("افتح لعبة WEKI Miner", web_app=WebAppInfo(url=web_url))],
+        [InlineKeyboardButton("قناة إثباتات السحب الرسمية", url="https://t.me/Sl8_Communit")]
+    ]
         await query.message.reply_html(text, reply_markup=InlineKeyboardMarkup(keyboard))
         return
 
@@ -204,7 +219,10 @@ async def handle_public_callback(update: Update, context: ContextTypes.DEFAULT_T
                 f"إجمالي الأرباح المسحوبة: {l['paid_out']:.2f} جنيه\n\n"
             )
         web_url = config.WEB_APP_URL if config.WEB_APP_URL.startswith("http") else "https://your-domain.com"
-        keyboard = [[InlineKeyboardButton("افتح لعبة WEKI Miner", web_app=WebAppInfo(url=web_url))]]
+        keyboard = [
+        [InlineKeyboardButton("افتح لعبة WEKI Miner", web_app=WebAppInfo(url=web_url))],
+        [InlineKeyboardButton("قناة إثباتات السحب الرسمية", url="https://t.me/Sl8_Communit")]
+    ]
         await query.message.reply_html(text, reply_markup=InlineKeyboardMarkup(keyboard))
         return
 
@@ -242,6 +260,21 @@ async def handle_admin_callback(update: Update, context: ContextTypes.DEFAULT_TY
             f"المبلغ: {withdrawal['amount']:.2f} جنيه على رقم {withdrawal['phone_number']} ({p_name})",
             parse_mode="HTML"
         )
+        # نشر إثبات السحب تلقائياً في القناة العامة
+        try:
+            proof_text = (
+                "إثبات سحب جديد تم تحويله بنجاح:\n\n"
+                f"المبلغ: <b>{withdrawal['amount']:.2f} جنيه</b>\n"
+                f"المحفظة: <b>{p_name}</b>\n"
+                f"المستلم: <code>{withdrawal['phone_number'][:3]}*****{withdrawal['phone_number'][-3:]}</code>\n"
+                f"كود العملية: <code>WKM-{withdrawal['id'] + 8420}</code>\n"
+                f"الحالة: تم التحويل بنجاح\n\n"
+                "العب واجمع عملاتك واسحب كاش عبر @Weki_earn_bot"
+            )
+            await context.bot.send_message(chat_id="@Sl8_Communit", text=proof_text, parse_mode="HTML")
+        except Exception as e:
+            logger.warning(f"Could not post to proofs channel: {e}")
+
         # إشعار المستخدم بنجاح التحويل
         try:
             await context.bot.send_message(
