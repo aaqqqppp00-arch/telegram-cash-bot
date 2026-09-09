@@ -149,15 +149,15 @@ function updateEnergyDisplay() {
     const countdownEl = document.getElementById("energy-countdown");
     if (countdownEl) {
         if (currentEnergy >= maxEnergy) {
-            countdownEl.innerText = "مكتملة بالكامل";
+            countdownEl.innerText = "الطاقة ممتلئة بالكامل";
         } else {
             const needed = maxEnergy - currentEnergy;
             const hrs = Math.floor(needed / 60);
             const mins = needed % 60;
             if (hrs > 0) {
-                countdownEl.innerText = `متبقي ${hrs} س و ${mins} د`;
+                countdownEl.innerText = `لاكتمال الطاقة: متبقي ${hrs} س و ${mins} د`;
             } else {
-                countdownEl.innerText = `متبقي ${mins} دقيقة`;
+                countdownEl.innerText = `لاكتمال الطاقة: متبقي ${mins} دقيقة`;
             }
         }
     }
