@@ -223,6 +223,27 @@ html, body {
     text-align: center;
 }
 
+.energy-sub-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: #71717a;
+    margin-top: 6px;
+    padding: 0 2px;
+}
+
+.sub-label {
+    color: #71717a;
+}
+
+.sub-timer {
+    color: #059669;
+    font-weight: 700;
+    font-family: monospace, sans-serif;
+}
+
 /* ================= منطقة التعدين المبتكرة ================= */
 .mining-stage {
     position: relative;

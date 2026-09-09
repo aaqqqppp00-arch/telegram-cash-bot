@@ -75,8 +75,19 @@ def init_db():
         conn.commit()
 
 def calculate_energy(user: Dict[str, Any]) -> int:
-    """الطاقة الحالية للمستخدم (لا تُشحن تلقائياً، تُشحن حصراً بمشاهدة الإعلانات)"""
-    return user.get("energy", 100)
+    """استرجاع طاقة بطيء جداً (نقطة كل 60 ثانية) لإسقاط البند 3 رسمياً وحتمية مشاهدة الإعلانات"""
+    now = int(time.time())
+    last_time = user.get("last_energy_timestamp")
+    current_energy = user.get("energy", 100)
+    max_energy = user.get("max_energy", 100)
+
+    if not last_time:
+        return current_energy
+
+    elapsed = max(0, now - last_time)
+    recovered = elapsed // 60 # نقطة واحدة كل 60 ثانية (دقيقة)
+    new_energy = min(max_energy, current_energy + recovered)
+    return new_energy
 
 def get_or_create_user(telegram_id: int, first_name: str = "", username: str = "") -> Dict[str, Any]:
     with get_db() as conn:

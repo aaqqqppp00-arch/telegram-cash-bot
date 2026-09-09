@@ -145,6 +145,22 @@ function updateEnergyDisplay() {
     minerEnergyEl.innerText = `${currentEnergy} / ${maxEnergy}`;
     const pct = Math.max(0, Math.min(100, (currentEnergy / maxEnergy) * 100));
     energyProgress.style.width = `${pct}%`;
+
+    const countdownEl = document.getElementById("energy-countdown");
+    if (countdownEl) {
+        if (currentEnergy >= maxEnergy) {
+            countdownEl.innerText = "مكتملة بالكامل";
+        } else {
+            const needed = maxEnergy - currentEnergy;
+            const hrs = Math.floor(needed / 60);
+            const mins = needed % 60;
+            if (hrs > 0) {
+                countdownEl.innerText = `متبقي ${hrs} س و ${mins} د`;
+            } else {
+                countdownEl.innerText = `متبقي ${mins} دقيقة`;
+            }
+        }
+    }
 }
 
 // تحديث عرض البيانات على الشاشة
@@ -163,7 +179,13 @@ function updateUIFromUser(user) {
     updateEnergyDisplay();
 }
 
-// لا يوجد شحن تلقائي - الشحن بمشاهدة الفيديو فقط لضمان أرباح الإعلانات
+// استرجاع طاقة بطيء جداً محلياً (نقطة واحدة كل دقيقة = 60 ثانية)
+setInterval(() => {
+    if (currentEnergy < maxEnergy) {
+        currentEnergy = Math.min(maxEnergy, currentEnergy + 1);
+        updateEnergyDisplay();
+    }
+}, 60000);
 
 // جلب بيانات المستخدم من السيرفر
 async function loadUserData() {
