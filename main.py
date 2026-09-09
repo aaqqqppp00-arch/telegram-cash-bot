@@ -359,6 +359,18 @@ async def get_css():
 async def get_js():
     return FileResponse(str(BASE_DIR / "static" / "app.js"), headers={"Cache-Control": "no-cache, no-store, must-revalidate"})
 
+@api_app.get("/api/bot-status")
+async def get_bot_status():
+    is_running = False
+    if bot_app and bot_app.updater:
+        is_running = bot_app.updater.running
+    return {
+        "bot_configured": bot_app is not None,
+        "bot_running": is_running,
+        "bot_id": config.BOT_TOKEN.split(":")[0] if ":" in config.BOT_TOKEN else "",
+        "web_app_url": config.WEB_APP_URL
+    }
+
 
 # --- نماذج الـ API ---
 
