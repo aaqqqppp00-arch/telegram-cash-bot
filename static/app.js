@@ -86,6 +86,31 @@ function showAlert(message, type = "info") {
 }
 
 // التنقل بين الشاشات
+
+// دوال التنقل العامة المتاحة للأزرار المباشرة
+window.openProofsScreen = function() {
+    showScreen(document.getElementById("screen-proofs") || screenProofs);
+    loadPublicProofs();
+};
+
+window.openLeaderboardScreen = function() {
+    showScreen(document.getElementById("screen-leaderboard") || screenLeaderboard);
+    loadLeaderboard();
+};
+
+window.openHomeScreen = function() {
+    showScreen(document.getElementById("screen-home") || screenHome);
+};
+
+window.openWithdrawScreen = function() {
+    showScreen(document.getElementById("screen-withdraw") || screenWithdraw);
+};
+
+window.openHistoryScreen = function() {
+    showScreen(document.getElementById("screen-history") || screenHistory);
+    loadWithdrawalHistory();
+};
+
 function showScreen(screen) {
     screenHome.classList.add("hidden");
     screenWithdraw.classList.add("hidden");

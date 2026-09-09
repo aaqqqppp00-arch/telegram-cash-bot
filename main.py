@@ -164,6 +164,50 @@ async def cmd_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_html(req_text, reply_markup=InlineKeyboardMarkup(buttons))
 
 
+
+async def handle_public_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """التعامل مع ضغطات أزرار إثباتات الدفع والمتصدرين لجميع المستخدمين"""
+    query = update.callback_query
+    await query.answer()
+    data = query.data
+
+    if data == "view_proofs":
+        proofs = database.get_public_payout_proofs()
+        text = "إثباتات وتأكيدات الدفع الحية لمستخدمي WEKI Miner:\n\n"
+        for p in proofs[:6]:
+            provider_name = {
+                "vodafone_cash": "فودافون كاش",
+                "orange_cash": "أورنج كاش",
+                "etisalat_cash": "اتصالات كاش",
+                "we_cash": "وي كاش"
+            }.get(p["provider"], p["provider"])
+            text += (
+                f"عملية رقم: <b>{p['id']}</b>\n"
+                f"المستلم: <b>{p['user_name']}</b> ({p['phone_masked']})\n"
+                f"المبلغ: <b>{p['amount']:.2f} جنيه</b> عبر {provider_name}\n"
+                f"الحالة: تم التحويل بنجاح ({p['time_ago']})\n"
+                "----------------------------\n"
+            )
+        text += "\nجميع التحويلات يتم إرسالها فوراً لمحافظ الكاش."
+        web_url = config.WEB_APP_URL if config.WEB_APP_URL.startswith("http") else "https://your-domain.com"
+        keyboard = [[InlineKeyboardButton("افتح لعبة WEKI Miner", web_app=WebAppInfo(url=web_url))]]
+        await query.message.reply_html(text, reply_markup=InlineKeyboardMarkup(keyboard))
+        return
+
+    if data == "view_leaderboard":
+        leaders = database.get_leaderboard()
+        text = "لوحة المتصدرين لأفضل معدني WEKI Miner:\n\n"
+        for l in leaders[:8]:
+            text += (
+                f"المركز {l['rank']}: <b>{l['name']}</b>\n"
+                f"المستوى: {l['level']} | العملات: {l['tokens']:,} $WEKI\n"
+                f"إجمالي الأرباح المسحوبة: {l['paid_out']:.2f} جنيه\n\n"
+            )
+        web_url = config.WEB_APP_URL if config.WEB_APP_URL.startswith("http") else "https://your-domain.com"
+        keyboard = [[InlineKeyboardButton("افتح لعبة WEKI Miner", web_app=WebAppInfo(url=web_url))]]
+        await query.message.reply_html(text, reply_markup=InlineKeyboardMarkup(keyboard))
+        return
+
 async def handle_admin_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """التعامل مع ضغطات أزرار الموافقة والرفض من المسؤول بدون إيموجي"""
     query = update.callback_query
@@ -240,7 +284,8 @@ if bot_app:
     bot_app.add_handler(CommandHandler("admin", cmd_admin))
     bot_app.add_handler(CommandHandler("proofs", cmd_proofs))
     bot_app.add_handler(CommandHandler("leaderboard", cmd_leaderboard))
-    bot_app.add_handler(CallbackQueryHandler(handle_admin_callback, pattern=r"^(appr|rejc|view)_"))
+    bot_app.add_handler(CallbackQueryHandler(handle_public_callback, pattern=r"^view_"))
+    bot_app.add_handler(CallbackQueryHandler(handle_admin_callback, pattern=r"^(appr|rejc)_"))
 
 
 # --- إعداد تطبيق FastAPI ودورة الحياة (Lifespan) ---
@@ -268,15 +313,15 @@ api_app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="
 
 @api_app.get("/")
 async def get_index():
-    return FileResponse(str(BASE_DIR / "static" / "index.html"))
+    return FileResponse(str(BASE_DIR / "static" / "index.html"), headers={"Cache-Control": "no-cache, no-store, must-revalidate"})
 
 @api_app.get("/style.css")
 async def get_css():
-    return FileResponse(str(BASE_DIR / "static" / "style.css"))
+    return FileResponse(str(BASE_DIR / "static" / "style.css"), headers={"Cache-Control": "no-cache, no-store, must-revalidate"})
 
 @api_app.get("/app.js")
 async def get_js():
-    return FileResponse(str(BASE_DIR / "static" / "app.js"))
+    return FileResponse(str(BASE_DIR / "static" / "app.js"), headers={"Cache-Control": "no-cache, no-store, must-revalidate"})
 
 
 # --- نماذج الـ API ---

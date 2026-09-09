@@ -89,22 +89,22 @@
             <hr class="divider">
 
             <!-- زر التوجه للمحفظة واستبدال العملات -->
-            <button id="btn-go-withdraw" class="btn btn-withdraw-nav">
+            <button id="btn-go-withdraw" class="btn btn-withdraw-nav" onclick="openWithdrawScreen()">
                 محفظة استبدال العملات بكاش
             </button>
 
             <!-- زر إثباتات الدفع والتأكيدات الحية (موافق للبند 8) -->
-            <button id="btn-go-proofs" class="btn btn-proofs-nav">
+            <button id="btn-go-proofs" class="btn btn-proofs-nav" onclick="openProofsScreen()">
                 إثباتات وتأكيدات الدفع الحية
             </button>
 
             <!-- زر لوحة المتصدرين وقائمة الشرف -->
-            <button id="btn-go-leaderboard" class="btn btn-secondary">
+            <button id="btn-go-leaderboard" class="btn btn-secondary" onclick="openLeaderboardScreen()">
                 لوحة المتصدرين وقائمة الشرف
             </button>
 
             <!-- زر سجل طلباتي الخاصة -->
-            <button id="btn-go-history" class="btn btn-secondary">
+            <button id="btn-go-history" class="btn btn-secondary" onclick="openHistoryScreen()">
                 سجل طلباتي وسحوباتي
             </button>
 
@@ -157,7 +157,7 @@
                 </button>
             </form>
 
-            <button id="btn-back-from-withdraw" class="btn btn-secondary">
+            <button id="btn-back-from-withdraw" class="btn btn-secondary" onclick="openHomeScreen()">
                 رجوع للتعدين
             </button>
 
@@ -173,7 +173,7 @@
                 <p class="empty-msg">بيحمل السجل...</p>
             </div>
 
-            <button id="btn-back-from-history" class="btn btn-secondary">
+            <button id="btn-back-from-history" class="btn btn-secondary" onclick="openHomeScreen()">
                 رجوع للتعدين
             </button>
 
@@ -196,7 +196,7 @@
                 <p class="empty-msg">بيحمل سجل الإثباتات...</p>
             </div>
 
-            <button id="btn-back-from-proofs" class="btn btn-secondary">
+            <button id="btn-back-from-proofs" class="btn btn-secondary" onclick="openHomeScreen()">
                 رجوع للتعدين
             </button>
 
@@ -216,7 +216,7 @@
                 <p class="empty-msg">بيحمل لوحة المتصدرين...</p>
             </div>
 
-            <button id="btn-back-from-leaderboard" class="btn btn-secondary">
+            <button id="btn-back-from-leaderboard" class="btn btn-secondary" onclick="openHomeScreen()">
                 رجوع للتعدين
             </button>
 
@@ -224,6 +224,6 @@
 
     </div>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=20260909_05"></script>
 </body>
 </html>
